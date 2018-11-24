@@ -1,0 +1,11 @@
+{
+  "routes": [
+    {
+      "endpoint": "/perfomers",
+      "destination": {
+        "uri": "http://localhost:44309/perfomers/",
+        "requiresAuthentication": "false"
+      }
+    }
+  ]
+}

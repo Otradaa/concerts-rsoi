@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore;
 
 namespace PerfomersServer.Models
@@ -11,7 +12,7 @@ namespace PerfomersServer.Models
         public PerfomersServerContext (DbContextOptions<PerfomersServerContext> options)
             : base(options)
         {
-            Database.EnsureCreated();
+           // Database.SetInitializer<PerfomersServerContext>();
         }
 
         public DbSet<PerfomersServer.Models.Perfomer> Perfomer { get; set; }

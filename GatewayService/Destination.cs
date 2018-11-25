@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,15 +14,15 @@ namespace GatewayService
     {
         public string Uri { get; set; }
         public bool RequiresAuthentication { get; set; }
-
+        static HttpClient client = new HttpClient();
         public Destination(string uri, bool requiresAuthentication)
         {
             Uri = uri;
             RequiresAuthentication = requiresAuthentication;
         }
 
-        public Destination(string uri)
-            : this(uri, false)
+        public Destination(string path)
+            : this(path, false)
         {
         }
 
@@ -29,20 +30,6 @@ namespace GatewayService
         {
             Uri = "/";
             RequiresAuthentication = false;
-        }
-
-        private string CreateDestinationUri(HttpRequest request)
-        {
-            string requestPath = request.Path.ToString();
-            string queryString = request.QueryString.ToString();
-
-            string endpoint = "";
-            string[] endpointSplit = requestPath.Substring(1).Split('/');
-
-            if (endpointSplit.Length > 1)
-                endpoint = endpointSplit[1];
-
-            return Uri + endpoint + queryString;
         }
 
         public async Task<HttpResponseMessage> SendRequest(HttpRequest request)
@@ -56,11 +43,28 @@ namespace GatewayService
                 }
             }
 
-            HttpClient client = new HttpClient();
-            HttpRequestMessage newRequest = new HttpRequestMessage(new HttpMethod(request.Method), CreateDestinationUri(request));
-            HttpResponseMessage response = await client.SendAsync(newRequest);
+            ///доделать тело реквеста
 
-            return response;
+            var newRequest = new HttpRequestMessage(new HttpMethod(request.Method), CreateDestinationUri(request));
+
+            //newRequest.Content = new StringContent(requestContent, Encoding.UTF8, request.ContentType);
+            //request.Path = CreateDestinationUri(request);
+            //var response = await client.SendAsync(newRequest);
+
+            return await client.SendAsync(newRequest);
+
+
         }
+
+        private string CreateDestinationUri(HttpRequest request)
+        {
+            string requestPath = request.Path.ToString();
+            string queryString = request.QueryString.ToString();
+
+            string endpoint = requestPath.Substring(1).Split('/')[1];
+
+            return Uri + endpoint + queryString;
+        }
+
     }
 }

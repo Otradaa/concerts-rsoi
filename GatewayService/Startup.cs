@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -29,7 +30,10 @@ namespace GatewayService
             app.Run(async (context) =>
             {
                 var content = await router.RouteRequest(context.Request);
-                await context.Response.WriteAsync(await content.Content.ReadAsStringAsync());
+                var wrwr =  content.Content.ReadAsStringAsync();
+                await context.Response.WriteAsync(await wrwr);
+                //var client = new HttpClient();
+                //await context.Response.WriteAsync(await client.GetAsync("https://localhost:44309/api/perfomers/1").Result.Content.ReadAsStringAsync());
             });
         }
     }

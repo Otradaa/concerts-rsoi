@@ -9,8 +9,8 @@ using PerfomersServer.Models;
 namespace PerfomersServer.Migrations
 {
     [DbContext(typeof(PerfomersServerContext))]
-    [Migration("20181123230518_InitialData")]
-    partial class InitialData
+    [Migration("20181125195611_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

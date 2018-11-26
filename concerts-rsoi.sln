@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2026
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "concerts-rsoi", "concerts-rsoi\concerts-rsoi.csproj", "{8461FFFD-B4F6-48B8-8EBE-8C76E64AC866}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PerfomersServer", "PerfomersServer\PerfomersServer.csproj", "{603F36E6-DDCB-4321-A4D4-6F2BFD1F6C44}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonModels", "CommonModels\CommonModels.csproj", "{A2E116D4-37B2-45B8-A0F4-05485FB8FDE5}"
@@ -13,16 +11,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GatewayService", "GatewaySe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VenuesService", "VenuesService\VenuesService.csproj", "{6075EE9F-2106-497F-B481-8778754EB24C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConcertsService", "ConcertsService\ConcertsService.csproj", "{B1348D37-56F9-4A53-B412-8296E8CAAB11}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8461FFFD-B4F6-48B8-8EBE-8C76E64AC866}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8461FFFD-B4F6-48B8-8EBE-8C76E64AC866}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8461FFFD-B4F6-48B8-8EBE-8C76E64AC866}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8461FFFD-B4F6-48B8-8EBE-8C76E64AC866}.Release|Any CPU.Build.0 = Release|Any CPU
 		{603F36E6-DDCB-4321-A4D4-6F2BFD1F6C44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{603F36E6-DDCB-4321-A4D4-6F2BFD1F6C44}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{603F36E6-DDCB-4321-A4D4-6F2BFD1F6C44}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -39,6 +35,10 @@ Global
 		{6075EE9F-2106-497F-B481-8778754EB24C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6075EE9F-2106-497F-B481-8778754EB24C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6075EE9F-2106-497F-B481-8778754EB24C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1348D37-56F9-4A53-B412-8296E8CAAB11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1348D37-56F9-4A53-B412-8296E8CAAB11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1348D37-56F9-4A53-B412-8296E8CAAB11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1348D37-56F9-4A53-B412-8296E8CAAB11}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

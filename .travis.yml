@@ -4,7 +4,7 @@ dotnet: 2.1.402
 branches:
   only:
     - develop
-before script:
+script:
   - dotnet restore
 
 

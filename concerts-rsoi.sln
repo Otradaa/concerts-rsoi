@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConcertsService", "Concerts
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gateway", "Gateway\Gateway.csproj", "{52CDA541-B04D-48FF-BCFC-39526C03D008}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XUnitTest", "XUnitTest\XUnitTest.csproj", "{EDD731B8-58DA-4467-8629-01F2CD5E0903}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{52CDA541-B04D-48FF-BCFC-39526C03D008}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{52CDA541-B04D-48FF-BCFC-39526C03D008}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{52CDA541-B04D-48FF-BCFC-39526C03D008}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EDD731B8-58DA-4467-8629-01F2CD5E0903}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDD731B8-58DA-4467-8629-01F2CD5E0903}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDD731B8-58DA-4467-8629-01F2CD5E0903}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDD731B8-58DA-4467-8629-01F2CD5E0903}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

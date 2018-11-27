@@ -73,10 +73,6 @@ namespace Gateway.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] Concert concert)
         {
-            //обновить данные о концерте
-            //пут концерт
-            //пут расписание
-            ///
             var request = new HttpRequestMessage(new HttpMethod("PUT"), "https://localhost:44343/api/concerts/"+id.ToString());
             request.Content = new StringContent(JsonConvert.SerializeObject(concert), Encoding.UTF8, "application/json");
             var response = await client.SendAsync(request);

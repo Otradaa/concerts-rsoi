@@ -70,8 +70,26 @@ namespace Gateway.Controllers
 
         // PUT: api/Concerts/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult> Put(int id, [FromBody] Concert concert)
         {
+            //обновить данные о концерте
+            //пут концерт
+            //пут расписание
+            var request = new HttpRequestMessage(new HttpMethod("PUT"), "https://localhost:44343/api/concerts/"+id.ToString());
+            request.Content = new StringContent(JsonConvert.SerializeObject(concert), Encoding.UTF8, "application/json");
+            var response = await client.SendAsync(request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Schedule schedule = new Schedule(concert.VenueId, concert.Date);
+                request = new HttpRequestMessage(new HttpMethod("PUT"), "https://localhost:44399/api/schedules");
+                request.Content = new StringContent(JsonConvert.SerializeObject(schedule), Encoding.UTF8, "application/json");
+                response = await client.SendAsync(request);
+                if (response.IsSuccessStatusCode)
+                    return NoContent();
+            }
+
+            return BadRequest();
         }
 
         // DELETE: api/ApiWithActions/5

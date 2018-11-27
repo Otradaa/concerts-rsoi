@@ -60,7 +60,20 @@ namespace VenuesService.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(venue).State = EntityState.Modified;
+            var context_venue = _context.Venue.Find(id);
+
+            if (context_venue == null)
+            {
+                return NotFound();
+            }
+
+            _context.Entry(context_venue).State = EntityState.Modified;
+
+            context_venue.Name = venue.Name;
+            context_venue.Address = venue.Address;
+            context_venue.Phone = venue.Phone;
+
+            _context.Venue.Update(context_venue);
 
             try
             {

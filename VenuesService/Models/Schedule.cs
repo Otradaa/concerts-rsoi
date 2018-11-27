@@ -10,6 +10,7 @@ namespace VenuesService.Models
     {
         public int Id { get; set; }
        
+        public int? ConcertId { get; set; }
         public int VenueId { get; set; }
         public Venue Venue { get; set; }
 

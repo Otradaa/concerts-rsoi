@@ -9,14 +9,16 @@ namespace Gateway.Models
     {
         public int Id { get; set; }
 
+        public int? ConcertId { get; set; }
         public int VenueId { get; set; }
 
         public DateTime Date { get; set; }
 
-        public Schedule(int vid, DateTime date)
+        public Schedule(int vid, DateTime date, int? cid)
         {
             VenueId = vid;
             Date = date;
+            ConcertId = cid;
         }
     }
 }

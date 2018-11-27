@@ -46,8 +46,52 @@ namespace VenuesService.Controllers
             return Ok(schedule);
         }
 
-        // PUT: api/Schedules/5
-        [HttpPut("{id}")]
+        // PUT: api/Schedules
+        [HttpPut]
+        public async Task<IActionResult> PutSchedule([FromBody] Schedule schedule)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            /*if (id != schedule.Id)
+            {
+                return BadRequest();
+            }*/
+
+            var context_schedule = _context.Schedule.First(s => s.ConcertId == schedule.ConcertId);
+
+            if (context_schedule == null)
+            {
+                return NotFound();
+            }
+
+            _context.Entry(context_schedule).State = EntityState.Modified;
+            context_schedule.VenueId = schedule.VenueId;
+            context_schedule.Date = schedule.Date;
+
+            _context.Schedule.Update(context_schedule);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ScheduleExists(context_schedule.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
         public async Task<IActionResult> PutSchedule([FromRoute] int id, [FromBody] Schedule schedule)
         {
             if (!ModelState.IsValid)

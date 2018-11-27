@@ -54,10 +54,11 @@ namespace Gateway.Controllers
             var request = new HttpRequestMessage(new HttpMethod("POST"), "https://localhost:44343/api/concerts");
             request.Content = new StringContent(JsonConvert.SerializeObject(concert), Encoding.UTF8, "application/json");
             var response = await client.SendAsync(request);
+            Concert _concert = await response.Content.ReadAsAsync<Concert>();
 
             if (response.IsSuccessStatusCode)
             {
-                Schedule schedule = new Schedule(concert.VenueId, concert.Date);
+                Schedule schedule = new Schedule(concert.VenueId, concert.Date, _concert.Id);
                 request = new HttpRequestMessage(new HttpMethod("POST"), "https://localhost:44399/api/schedules");
                 request.Content = new StringContent(JsonConvert.SerializeObject(schedule), Encoding.UTF8, "application/json");
                 response = await client.SendAsync(request);
@@ -75,13 +76,14 @@ namespace Gateway.Controllers
             //обновить данные о концерте
             //пут концерт
             //пут расписание
+            ///
             var request = new HttpRequestMessage(new HttpMethod("PUT"), "https://localhost:44343/api/concerts/"+id.ToString());
             request.Content = new StringContent(JsonConvert.SerializeObject(concert), Encoding.UTF8, "application/json");
             var response = await client.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
             {
-                Schedule schedule = new Schedule(concert.VenueId, concert.Date);
+                Schedule schedule = new Schedule(concert.VenueId, concert.Date, id);
                 request = new HttpRequestMessage(new HttpMethod("PUT"), "https://localhost:44399/api/schedules");
                 request.Content = new StringContent(JsonConvert.SerializeObject(schedule), Encoding.UTF8, "application/json");
                 response = await client.SendAsync(request);

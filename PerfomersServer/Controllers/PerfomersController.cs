@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PerfomersServer.Data;
 using PerfomersServer.Models;
 
 namespace PerfomersServer.Controllers
@@ -13,19 +14,20 @@ namespace PerfomersServer.Controllers
     [ApiController]
     public class PerfomersController : ControllerBase
     {
-        private readonly PerfomersServerContext _context;
+        //private readonly PerfomersServerContext _context;
+        private IRepository _repository;
 
-        public PerfomersController(PerfomersServerContext context)
+        public PerfomersController(IRepository repository)
         {
-            _context = context;
+            _repository = repository;
         }
 
         // GET: api/Perfomers
-        [HttpGet]
+       /* [HttpGet]
         public IEnumerable<Perfomer> GetPerfomer()
         {
             return _context.Perfomer;
-        }
+        }*/
 
         // GET: api/Perfomers/5
         [HttpGet("{id}")]
@@ -36,7 +38,7 @@ namespace PerfomersServer.Controllers
                 return BadRequest(ModelState);
             }
 
-            var perfomer = await _context.Perfomer.FindAsync(id);
+            var perfomer = await _repository.GetPerfomer(id);//_context.Perfomer.FindAsync(id);
 
             if (perfomer == null)
             {
@@ -47,7 +49,7 @@ namespace PerfomersServer.Controllers
         }
 
         // PUT: api/Perfomers/5
-        [HttpPut("{id}")]
+       /* [HttpPut("{id}")]
         public async Task<IActionResult> PutPerfomer([FromRoute] int id, [FromBody] Perfomer perfomer)
         {
             if (!ModelState.IsValid)
@@ -79,10 +81,10 @@ namespace PerfomersServer.Controllers
             }
 
             return NoContent();
-        }
+        }*/
 
         // POST: api/Perfomers
-        [HttpPost]
+      /*  [HttpPost]
         public async Task<IActionResult> PostPerfomer([FromBody] Perfomer perfomer)
         {
             if (!ModelState.IsValid)
@@ -95,9 +97,9 @@ namespace PerfomersServer.Controllers
 
             return CreatedAtAction("GetPerfomer", new { id = perfomer.Id }, perfomer);
         }
-
+        */
         // DELETE: api/Perfomers/5
-        [HttpDelete("{id}")]
+     /*   [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePerfomer([FromRoute] int id)
         {
             if (!ModelState.IsValid)
@@ -115,11 +117,11 @@ namespace PerfomersServer.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(perfomer);
-        }
+        }*/
 
-        private bool PerfomerExists(int id)
+        /*private bool PerfomerExists(int id)
         {
             return _context.Perfomer.Any(e => e.Id == id);
-        }
+        }*/
     }
 }

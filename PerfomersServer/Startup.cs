@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using PerfomersServer.Models;
+using PerfomersServer.Data;
 
 namespace PerfomersServer
 {
@@ -31,6 +32,7 @@ namespace PerfomersServer
 
             services.AddDbContext<PerfomersServerContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("PerfomersServerContext")));
+            services.AddScoped<IRepository, Repository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

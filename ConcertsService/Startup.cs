@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using ConcertsService.Models;
+using ConcertsService.Data;
 
 namespace ConcertsService
 {
@@ -31,6 +32,8 @@ namespace ConcertsService
 
             services.AddDbContext<ConcertsContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("ConcertsContext")));
+
+            services.AddScoped<IConcertRepository, ConcertRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

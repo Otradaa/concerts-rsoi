@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ConcertsService.Models;
+using ConcertsService.Data;
 
 namespace ConcertsService.Controllers
 {
@@ -13,19 +14,19 @@ namespace ConcertsService.Controllers
     [ApiController]
     public class ConcertsController : ControllerBase
     {
-        private readonly ConcertsContext _context;
+        private readonly IConcertRepository _repo;
 
-        public ConcertsController(ConcertsContext context)
+        public ConcertsController(IConcertRepository repo)
         {
-            _context = context;
+            _repo = repo;
         }
 
         // GET: api/Concerts
-        [HttpGet]
+       /* [HttpGet]
         public IEnumerable<Concert> GetConcert()
         {
             return _context.Concert;
-        }
+        }*/
 
         // GET: api/Concerts/5
         [HttpGet("{id}")]
@@ -36,7 +37,7 @@ namespace ConcertsService.Controllers
                 return BadRequest(ModelState);
             }
 
-            var concert = await _context.Concert.FindAsync(id);
+            var concert = await _repo.GetConcert(id);
 
             if (concert == null)
             {
@@ -60,15 +61,15 @@ namespace ConcertsService.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(concert).State = EntityState.Modified;
+            _repo.ChangeState(concert, EntityState.Modified);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _repo.SaveChanges();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ConcertExists(id))
+                if (!_repo.ConcertExists(id))
                 {
                     return NotFound();
                 }
@@ -90,14 +91,14 @@ namespace ConcertsService.Controllers
                 return BadRequest(ModelState);
             }
 
-            _context.Concert.Add(concert);
-            await _context.SaveChangesAsync();
+            _repo.AddConcert(concert);
+            await _repo.SaveChanges();
 
             return CreatedAtAction("GetConcert", new { id = concert.Id }, concert);
         }
 
         // DELETE: api/Concerts/5
-        [HttpDelete("{id}")]
+      /*  [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteConcert([FromRoute] int id)
         {
             if (!ModelState.IsValid)
@@ -115,11 +116,8 @@ namespace ConcertsService.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(concert);
-        }
+        }*/
 
-        private bool ConcertExists(int id)
-        {
-            return _context.Concert.Any(e => e.Id == id);
-        }
+        
     }
 }

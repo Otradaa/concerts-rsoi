@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using VenuesService.Data;
 using VenuesService.Models;
 
 namespace VenuesService.Controllers
@@ -13,19 +14,19 @@ namespace VenuesService.Controllers
     [ApiController]
     public class VenuesController : ControllerBase
     {
-        private readonly VenuesContext _context;
+        private readonly IVenuesRepository _repo;
 
-        public VenuesController(VenuesContext context)
+        public VenuesController(IVenuesRepository repo)
         {
-            _context = context;
+            _repo = repo;
         }
 
         // GET: api/Venues
-        [HttpGet]
+      /*  [HttpGet]
         public IEnumerable<Venue> GetVenue()
         {
             return _context.Venue;
-        }
+        }*/
 
         // GET: api/Venues/5
         [HttpGet("{id}")]
@@ -36,7 +37,7 @@ namespace VenuesService.Controllers
                 return BadRequest(ModelState);
             }
 
-            var venue = await _context.Venue.FindAsync(id);
+            var venue = await _repo.GetVenue(id);
 
             if (venue == null)
             {
@@ -47,7 +48,7 @@ namespace VenuesService.Controllers
         }
 
         // PUT: api/Venues/5
-        [HttpPut("{id}")]
+      /*  [HttpPut("{id}")]
         public async Task<IActionResult> PutVenue([FromRoute] int id, [FromBody] Venue venue)
         {
             if (!ModelState.IsValid)
@@ -92,10 +93,10 @@ namespace VenuesService.Controllers
             }
 
             return NoContent();
-        }
+        }*/
 
         // POST: api/Venues
-        [HttpPost]
+      /*  [HttpPost]
         public async Task<IActionResult> PostVenue([FromBody] Venue venue)
         {
             if (!ModelState.IsValid)
@@ -128,11 +129,11 @@ namespace VenuesService.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(venue);
-        }
+        }*/
 
-        private bool VenueExists(int id)
+        /*private bool VenueExists(int id)
         {
             return _context.Venue.Any(e => e.Id == id);
-        }
+        }*/
     }
 }

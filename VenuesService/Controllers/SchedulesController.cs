@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using VenuesService.Data;
 using VenuesService.Models;
 
 namespace VenuesService.Controllers
@@ -13,38 +14,38 @@ namespace VenuesService.Controllers
     [ApiController]
     public class SchedulesController : ControllerBase
     {
-        private readonly VenuesContext _context;
+        private readonly IVenuesRepository _repo;
 
-        public SchedulesController(VenuesContext context)
+        public SchedulesController(IVenuesRepository repo)
         {
-            _context = context;
+            _repo = repo;
         }
 
         // GET: api/Schedules
-        [HttpGet]
-        public IEnumerable<Schedule> GetSchedule()
-        {
-            return _context.Schedule;
-        }
+        /* [HttpGet]
+         public IEnumerable<Schedule> GetSchedule()
+         {
+             return _context.Schedule;
+         }*/
 
         // GET: api/Schedules/5
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetSchedule([FromRoute] int id)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        /*   [HttpGet("{id}")]
+           public async Task<IActionResult> GetSchedule([FromRoute] int id)
+           {
+               if (!ModelState.IsValid)
+               {
+                   return BadRequest(ModelState);
+               }
 
-            var schedule = await _context.Schedule.FindAsync(id);
+               var schedule = await _context.Schedule.FindAsync(id);
 
-            if (schedule == null)
-            {
-                return NotFound();
-            }
+               if (schedule == null)
+               {
+                   return NotFound();
+               }
 
-            return Ok(schedule);
-        }
+               return Ok(schedule);
+           }*/
 
         // PUT: api/Schedules
         [HttpPut]
@@ -60,26 +61,26 @@ namespace VenuesService.Controllers
                 return BadRequest();
             }*/
 
-            var context_schedule = _context.Schedule.First(s => s.ConcertId == schedule.ConcertId);
+            var context_schedule = _repo.FirstSchedule(schedule.ConcertId);
 
             if (context_schedule == null)
             {
                 return NotFound();
             }
 
-            _context.Entry(context_schedule).State = EntityState.Modified;
-            context_schedule.VenueId = schedule.VenueId;
+            _repo.ChangeState(context_schedule, EntityState.Modified);
+            /*context_schedule.VenueId = schedule.VenueId;
             context_schedule.Date = schedule.Date;
 
-            _context.Schedule.Update(context_schedule);
+            _context.Schedule.Update(context_schedule);*/
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _repo.SaveChanges();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ScheduleExists(context_schedule.Id))
+                if (!_repo.ScheduleExists(context_schedule.Id))
                 {
                     return NotFound();
                 }
@@ -92,7 +93,7 @@ namespace VenuesService.Controllers
             return NoContent();
         }
 
-        public async Task<IActionResult> PutSchedule([FromRoute] int id, [FromBody] Schedule schedule)
+    /*    public async Task<IActionResult> PutSchedule([FromRoute] int id, [FromBody] Schedule schedule)
         {
             if (!ModelState.IsValid)
             {
@@ -123,7 +124,7 @@ namespace VenuesService.Controllers
             }
 
             return NoContent();
-        }
+        }*/
 
         // POST: api/Schedules
         [HttpPost]
@@ -134,14 +135,14 @@ namespace VenuesService.Controllers
                 return BadRequest(ModelState);
             }
 
-            _context.Schedule.Add(schedule);
-            await _context.SaveChangesAsync();
+            _repo.AddSchedule(schedule);
+            await _repo.SaveChanges();
 
             return CreatedAtAction("GetSchedule", new { id = schedule.Id }, schedule);
         }
 
         // DELETE: api/Schedules/5
-        [HttpDelete("{id}")]
+      /*  [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSchedule([FromRoute] int id)
         {
             if (!ModelState.IsValid)
@@ -159,11 +160,7 @@ namespace VenuesService.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(schedule);
-        }
+        }*/
 
-        private bool ScheduleExists(int id)
-        {
-            return _context.Schedule.Any(e => e.Id == id);
-        }
     }
 }

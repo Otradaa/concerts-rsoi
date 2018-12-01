@@ -1,5 +1,6 @@
 ﻿using ConcertsService.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,9 +32,9 @@ namespace ConcertsService.Data
             _context.Entry(concert).State = state;
         }
 
-        public void AddConcert(Concert concert)
+        public EntityState AddConcert(Concert concert)
         {
-            _context.Concert.Add(concert);
+            return _context.Concert.Add(concert).State;
         }
 
         public bool ConcertExists(int id)

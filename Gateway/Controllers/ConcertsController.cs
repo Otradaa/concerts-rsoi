@@ -41,11 +41,11 @@ namespace Gateway.Controllers
         }
 
         // GET: api/Concerts/5
-        [HttpGet("{id}", Name = "Get")]
+       /* [HttpGet("{id}", Name = "Get")]
         public string Get(int id)
         {
             return "value";
-        }
+        }*/
 
         // POST: api/Concerts
         [HttpPost]
@@ -91,9 +91,9 @@ namespace Gateway.Controllers
         }
 
         // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
+        /*[HttpDelete("{id}")]
         public void Delete(int id)
         {
-        }
+        }*/
     }
 }

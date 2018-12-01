@@ -15,7 +15,7 @@ namespace PerfomersServer.Controllers
     public class PerfomersController : ControllerBase
     {
         //private readonly PerfomersServerContext _context;
-        private IRepository _repository;
+        private readonly IRepository _repository;
 
         public PerfomersController(IRepository repository)
         {

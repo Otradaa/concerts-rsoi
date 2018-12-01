@@ -1,5 +1,6 @@
 ﻿using ConcertsService.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace ConcertsService.Data
         Task<Concert> GetConcert(int id);
         Task SaveChanges();
         void ChangeState(Concert concert, EntityState state);
-        void AddConcert(Concert concert);
+        EntityState AddConcert(Concert concert);
         bool ConcertExists(int id);
 
     }

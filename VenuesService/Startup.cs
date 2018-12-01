@@ -33,7 +33,6 @@ namespace VenuesService
             services.AddDbContext<VenuesContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("VenuesContext")));
             services.AddScoped<IVenuesRepository, VenuesRepository>();
-            services.AddScoped<ISchedulesRepository, SchedulesRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

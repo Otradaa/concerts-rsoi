@@ -27,4 +27,9 @@
     <ProjectReference Include="..\VenuesService\VenuesService.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\VenuesController\" />
+    <Folder Include="Controllers\SchedulesController\" />
+  </ItemGroup>
+
 </Project>

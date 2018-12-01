@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace XUnitTest
 {
-    public class PerfomersControllerTests
+    public class GetPerfomerTests
     {
         [Fact]
         public async Task GetPerfomerReturnsPerfomerByIdTest()
@@ -30,8 +30,8 @@ namespace XUnitTest
             var result = await controller.GetPerfomer(testId);
 
             // Assert
-            var viewResult = Assert.IsType<OkObjectResult>(result);
-            var model = Assert.IsType<Perfomer>(viewResult.Value);
+            var requestResult = Assert.IsType<OkObjectResult>(result);
+            var model = Assert.IsType<Perfomer>(requestResult.Value);
             Assert.Equal("Group One", model.Name);
             Assert.Equal(testId, model.Id);
         }
@@ -51,7 +51,7 @@ namespace XUnitTest
             var result = await controller.GetPerfomer(testId);
 
             // Assert
-            var viewResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.IsType<BadRequestObjectResult>(result);
             //var model = Assert.IsType<Perfomer>(viewResult.Value);
             //Assert.Equal("Group One", model.Name);
             //Assert.Equal(testId, model.Id);
@@ -71,7 +71,7 @@ namespace XUnitTest
             var result = await controller.GetPerfomer(testId);
 
             // Assert
-            var viewResult = Assert.IsType<NotFoundResult>(result);
+           Assert.IsType<NotFoundResult>(result);
             
         }
 

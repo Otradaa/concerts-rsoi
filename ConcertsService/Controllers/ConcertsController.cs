@@ -22,11 +22,11 @@ namespace ConcertsService.Controllers
         }
 
         // GET: api/Concerts
-       /* [HttpGet]
-        public IEnumerable<Concert> GetConcert()
+        [HttpGet]
+        public IEnumerable<Concert> GetConcert([FromQuery] int page = 1, [FromQuery] int size = 2)
         {
-            return _context.Concert;
-        }*/
+            return _repo.GetAllConcerts(page, size);
+        }
 
         // GET: api/Concerts/5
         [HttpGet("{id}")]

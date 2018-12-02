@@ -10,6 +10,7 @@ namespace ConcertsService.Data
 {
     public interface IConcertRepository
     {
+        IEnumerable<Concert> GetAllConcerts(int page, int size);
         Task<Concert> GetConcert(int id);
         Task SaveChanges();
         void ChangeState(Concert concert, EntityState state);

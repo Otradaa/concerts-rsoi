@@ -17,6 +17,12 @@ namespace ConcertsService.Data
             _context = context;
         }
 
+        public IEnumerable<Concert> GetAllConcerts(int page, int size)
+        {
+            int offset = (page - 1) * size;
+            return _context.Concert.Skip(offset).Take(size);
+        }
+
         public async Task<Concert> GetConcert(int id)
         {
             return await _context.Concert.FindAsync(id);

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Gateway.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,6 +26,10 @@ namespace Gateway
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddHttpClient<IConcertService, ConcertService>();
+            services.AddHttpClient<IVenuesService, VenuesService>();
+            services.AddHttpClient<IPerfomersService, PerfomersService>();
+            services.AddSingleton<IGatewayService, GatewayService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

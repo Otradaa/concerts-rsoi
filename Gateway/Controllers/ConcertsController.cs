@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Gateway.Models;
+using Gateway.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -15,26 +16,26 @@ namespace Gateway.Controllers
     [ApiController]
     public class ConcertsController : ControllerBase
     {
-        private static HttpClient client = new HttpClient();
+        private readonly IGatewayService gateway;
+        public ConcertsController(IGatewayService _gateway)
+        {
+            gateway = _gateway;
+        }
+        //private static HttpClient client = new HttpClient();
         // GET: api/Concerts
         [HttpGet]
-        public async Task<IEnumerable<ConcertRequest>> Get()
+        public async Task<IEnumerable<ConcertRequest>> Get([FromQuery] int page=1, [FromQuery] int pageSize=2)
         {
-            var request = new HttpRequestMessage(new HttpMethod("GET"), "https://localhost:44343/api/concerts");
-            //var client = new HttpClient();
-            var response = await client.SendAsync(request);
-            //List<Concert> concerts = JsonConvert.DeserializeObject<List<Concert>>(Convert.ToString(response.Content.re));
-            List<Concert> concerts = await response.Content.ReadAsAsync<List<Concert>>();
+            List<Concert> concerts = await gateway.GetConcerts(page, pageSize);
             List<ConcertRequest> fullconcerts = new List<ConcertRequest>();
             foreach (var concert in concerts)
             {
-                request = new HttpRequestMessage(new HttpMethod("GET"), "https://localhost:44309/api/perfomers/" + concert.PerfomerId.ToString());
-                response = await client.SendAsync(request);
-                Perfomer perfomer = await response.Content.ReadAsAsync<Perfomer>();
-                request = new HttpRequestMessage(new HttpMethod("GET"), "https://localhost:44399/api/venues/" + concert.PerfomerId.ToString());
-                response = await client.SendAsync(request);
-                Venue venue = await response.Content.ReadAsAsync<Venue>();
-                fullconcerts.Add(new ConcertRequest(concert.Id, perfomer.Name, venue.Name, venue.Address, concert.Date));
+                Perfomer perfomer = await gateway.GetPerfomerById(concert.PerfomerId);
+                Venue venue = await gateway.GetVenueById(concert.VenueId);
+                //validate?
+                if (venue != null && venue != null)
+                    fullconcerts.Add(new ConcertRequest(concert.Id, perfomer.Name, 
+                        venue.Name, venue.Address, concert.Date));
             }
 
             return fullconcerts;
@@ -51,21 +52,16 @@ namespace Gateway.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Concert concert)
         {
-            var request = new HttpRequestMessage(new HttpMethod("POST"), "https://localhost:44343/api/concerts");
-            request.Content = new StringContent(JsonConvert.SerializeObject(concert), Encoding.UTF8, "application/json");
-            var response = await client.SendAsync(request);
-            Concert _concert = await response.Content.ReadAsAsync<Concert>();
-
-            if (response.IsSuccessStatusCode)
+            int id;
+            bool success;
+            (success, id) = await gateway.PostConcert(concert);
+            if (success)
             {
-                Schedule schedule = new Schedule(concert.VenueId, concert.Date, _concert.Id);
-                request = new HttpRequestMessage(new HttpMethod("POST"), "https://localhost:44399/api/schedules");
-                request.Content = new StringContent(JsonConvert.SerializeObject(schedule), Encoding.UTF8, "application/json");
-                response = await client.SendAsync(request);
-                if (response.IsSuccessStatusCode)
+                Schedule schedule = new Schedule(concert.VenueId, concert.Date, id);
+                success = await gateway.PostSchedule(schedule);
+                if (success)
                     return Ok();
             }
-
             return BadRequest();
         }
 
@@ -73,17 +69,12 @@ namespace Gateway.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] Concert concert)
         {
-            var request = new HttpRequestMessage(new HttpMethod("PUT"), "https://localhost:44343/api/concerts/"+id.ToString());
-            request.Content = new StringContent(JsonConvert.SerializeObject(concert), Encoding.UTF8, "application/json");
-            var response = await client.SendAsync(request);
-
-            if (response.IsSuccessStatusCode)
+            bool success = await gateway.PutConcert(id, concert);
+            if (success)
             {
                 Schedule schedule = new Schedule(concert.VenueId, concert.Date, id);
-                request = new HttpRequestMessage(new HttpMethod("PUT"), "https://localhost:44399/api/schedules");
-                request.Content = new StringContent(JsonConvert.SerializeObject(schedule), Encoding.UTF8, "application/json");
-                response = await client.SendAsync(request);
-                if (response.IsSuccessStatusCode)
+                success = await gateway.PutSchedule(schedule);
+                if (success)
                     return NoContent();
             }
 

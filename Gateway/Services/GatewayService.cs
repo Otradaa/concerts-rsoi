@@ -35,7 +35,7 @@ namespace Gateway.Services
             return await venuesService.GetById(id);
         }
 
-        public async Task<(bool, int)> PostConcert(Concert concert)
+        public async Task<(bool, Concert)> PostConcert(Concert concert)
         {
             return await concertService.PostOne(concert);
         }

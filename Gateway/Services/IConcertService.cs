@@ -9,7 +9,7 @@ namespace Gateway.Services
     public interface IConcertService
     {
         Task<List<Concert>> GetAll(int page, int size);
-        Task<(bool, int)> PostOne(Concert concert);
+        Task<(bool, Concert)> PostOne(Concert concert);
         Task<bool> PutOne(int id, Concert concert);
     }
 }

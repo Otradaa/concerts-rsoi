@@ -37,7 +37,7 @@ namespace Gateway.Services
             return await response.Content.ReadAsAsync<List<Concert>>();
         }
 
-        public async Task<(bool, int)> PostOne(Concert concert)
+        public async Task<(bool, Concert)> PostOne(Concert concert)
         {
             var request = new HttpRequestMessage(new HttpMethod("POST"),
                 _remoteServiceBaseUrl + "/concerts");
@@ -45,7 +45,7 @@ namespace Gateway.Services
                 Encoding.UTF8, "application/json");
             var response = await _httpClient.SendAsync(request);
             concert = await response.Content.ReadAsAsync<Concert>();
-            return (response.IsSuccessStatusCode, concert.Id);
+            return (response.IsSuccessStatusCode, concert);
         }
 
         public async Task<bool> PutOne(int id, Concert concert)

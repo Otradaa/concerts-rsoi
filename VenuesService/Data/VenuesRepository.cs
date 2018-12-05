@@ -21,14 +21,21 @@ namespace VenuesService.Data
             return await _context.Venue.FindAsync(id);
         }
 
+        public async Task<Schedule> GetSchedule(int id)
+        {
+            return await _context.Schedule.FindAsync(id);
+        }
+
         public async Task SaveChanges()
         {
             await _context.SaveChangesAsync();
         }
 
-        public void ChangeState(Schedule schedule, EntityState state)
+        public void ChangeState(Schedule _schedule, Schedule schedule, EntityState state)
         {
-            _context.Entry(schedule).State = state;
+            _schedule.Date = schedule.Date;
+            _schedule.VenueId = schedule.VenueId;
+            _context.Entry(_schedule).State = state;
         }
 
         public void AddSchedule(Schedule schedule)

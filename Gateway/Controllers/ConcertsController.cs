@@ -25,7 +25,7 @@ namespace Gateway.Controllers
             _gateway = gateway;
             _logger = logger;
         }
-        //private static HttpClient client = new HttpClient();
+
         // GET: api/Concerts
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] int page=1, [FromQuery] int pageSize=2)
@@ -58,20 +58,12 @@ namespace Gateway.Controllers
             return NoContent();
         }
 
-        // GET: api/Concerts/5
-       /* [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
-        {
-            return "value";
-        }*/
-
         // POST: api/Concerts
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Concert concert)
         {
             _logger.LogInformation("-> requested POST /concerts");
 
-            //int id;
             bool success;
             _logger.LogInformation("-> request to POST concertsService/concerts");
             (success, concert) = await _gateway.PostConcert(concert);
@@ -112,11 +104,5 @@ namespace Gateway.Controllers
             _logger.LogInformation("-> PUT /concerts returned BadRequest");
             return BadRequest();
         }
-
-        // DELETE: api/ApiWithActions/5
-        /*[HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }*/
     }
 }

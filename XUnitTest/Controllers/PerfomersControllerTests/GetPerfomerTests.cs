@@ -11,6 +11,7 @@ using PerfomersServer.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace XUnitTest
 {
@@ -21,10 +22,11 @@ namespace XUnitTest
         {
             // Arrange
             int testId = 1;
+            var mockLogger = new Mock<ILogger<PerfomersController>>();
             var mockRepo = new Mock<IRepository>();
             mockRepo.Setup(c => c.GetPerfomer(testId))
                 .ReturnsAsync(GetTestPerfomers().FirstOrDefault(p => p.Id == testId));
-            var controller = new PerfomersController(mockRepo.Object);
+            var controller = new PerfomersController(mockRepo.Object, mockLogger.Object);
 
             // Act
             var result = await controller.GetPerfomer(testId);
@@ -41,10 +43,11 @@ namespace XUnitTest
         {
             // Arrange
             int testId = 1;
+            var mockLogger = new Mock<ILogger<PerfomersController>>();
             var mockRepo = new Mock<IRepository>();
             mockRepo.Setup(c => c.GetPerfomer(testId))
                 .ReturnsAsync(GetTestPerfomers().FirstOrDefault(p => p.Id == testId));
-            var controller = new PerfomersController(mockRepo.Object);
+            var controller = new PerfomersController(mockRepo.Object, mockLogger.Object);
             controller.ModelState.AddModelError("error", "some error");
 
             // Act
@@ -62,10 +65,11 @@ namespace XUnitTest
         {
             // Arrange
             int testId = 0;
+            var mockLogger = new Mock<ILogger<PerfomersController>>();
             var mockRepo = new Mock<IRepository>();
             mockRepo.Setup(c => c.GetPerfomer(testId))
                 .ReturnsAsync(GetTestPerfomers().FirstOrDefault(p => p.Id == testId));
-            var controller = new PerfomersController(mockRepo.Object);
+            var controller = new PerfomersController(mockRepo.Object, mockLogger.Object);
 
             // Act
             var result = await controller.GetPerfomer(testId);

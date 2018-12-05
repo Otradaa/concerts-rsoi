@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <PackageReference Include="coveralls.io" Version="1.4.2" />
-    <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.6" />
     <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.4" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
@@ -25,11 +24,6 @@
     <ProjectReference Include="..\Gateway\Gateway.csproj" />
     <ProjectReference Include="..\PerfomersServer\PerfomersServer.csproj" />
     <ProjectReference Include="..\VenuesService\VenuesService.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Controllers\VenuesController\" />
-    <Folder Include="Controllers\SchedulesController\" />
   </ItemGroup>
 
 </Project>

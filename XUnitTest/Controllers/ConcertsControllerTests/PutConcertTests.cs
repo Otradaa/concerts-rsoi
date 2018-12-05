@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Update;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -22,7 +23,8 @@ namespace XUnitTest.Controllers.ConcertsControllerTests
         {
             // Arrange & Act
             var mockRepo = new Mock<IConcertRepository>();
-            var controller = new ConcertsController(mockRepo.Object);
+            var mockLogger = new Mock<ILogger<ConcertsController>>();
+            var controller = new ConcertsController(mockRepo.Object, mockLogger.Object);
             controller.ModelState.AddModelError("error", "some error");
 
             // Act
@@ -39,7 +41,8 @@ namespace XUnitTest.Controllers.ConcertsControllerTests
             int testId = 2;
             Concert concert = GetTestConcerts()[0];
             var mockRepo = new Mock<IConcertRepository>();
-            var controller = new ConcertsController(mockRepo.Object);
+            var mockLogger = new Mock<ILogger<ConcertsController>>();
+            var controller = new ConcertsController(mockRepo.Object, mockLogger.Object);
            
             // Act
             var result = await controller.PutConcert(testId, concert);
@@ -54,10 +57,11 @@ namespace XUnitTest.Controllers.ConcertsControllerTests
             // Arrange
             int testId = 1;
             Concert concert = GetTestConcerts().FirstOrDefault(p => p.Id == testId);
+            var mockLogger = new Mock<ILogger<ConcertsController>>();
             var mockRepo = new Mock<IConcertRepository>();
             mockRepo.Setup(c => c.ChangeState(concert, EntityState.Modified)).Verifiable();
             mockRepo.Setup(c => c.SaveChanges()).Returns(Task.CompletedTask);
-            var controller = new ConcertsController(mockRepo.Object);
+            var controller = new ConcertsController(mockRepo.Object, mockLogger.Object);
 
             // Act
             var result = await controller.PutConcert(testId, concert);
@@ -77,12 +81,14 @@ namespace XUnitTest.Controllers.ConcertsControllerTests
 
             int testId = 1;
             Concert concert = GetTestConcerts().FirstOrDefault(p => p.Id == testId);
+            var mockLogger = new Mock<ILogger<ConcertsController>>();
             var mockRepo = new Mock<IConcertRepository>();
-            mockRepo.Setup(c => c.ChangeState(concert, EntityState.Modified)).Verifiable();
+            mockRepo.Setup(c => c.ChangeState(concert, EntityState.Modified))
+                .Verifiable();
             mockRepo.Setup(c => c.SaveChanges()).Throws(
                 new DbUpdateConcurrencyException(It.IsNotNull<string>(), entries));
             mockRepo.Setup(c => c.ConcertExists(testId)).Returns(true);
-            var controller = new ConcertsController(mockRepo.Object);
+            var controller = new ConcertsController(mockRepo.Object, mockLogger.Object);
 
             // Act Assert
             await Assert.ThrowsAsync<DbUpdateConcurrencyException>(() =>
@@ -100,12 +106,13 @@ namespace XUnitTest.Controllers.ConcertsControllerTests
 
             int testId = 1;
             Concert concert = GetTestConcerts().FirstOrDefault(p => p.Id == testId);
+            var mockLogger = new Mock<ILogger<ConcertsController>>();
             var mockRepo = new Mock<IConcertRepository>();
             mockRepo.Setup(c => c.ChangeState(concert, EntityState.Modified)).Verifiable();
             mockRepo.Setup(c => c.SaveChanges()).Throws(
                 new DbUpdateConcurrencyException(It.IsNotNull<string>(), entries));
             mockRepo.Setup(c => c.ConcertExists(testId)).Returns(false);
-            var controller = new ConcertsController(mockRepo.Object);
+            var controller = new ConcertsController(mockRepo.Object, mockLogger.Object);
 
             // Act
             var result = await controller.PutConcert(testId, concert);

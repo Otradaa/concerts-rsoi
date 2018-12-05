@@ -2,6 +2,7 @@
 using ConcertsService.Data;
 using ConcertsService.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -15,66 +16,88 @@ namespace XUnitTest
     public class GetConcertTests
     {
         [Fact]
-        public async Task GetConcertReturnsConcertByIdTest()
+        public void GetConcertReturnsAllConcertsTest()
         {
             // Arrange
-            int testId = 1;
+            int page = 1, size = 2;
+            var testConcerts = GetTestConcerts().Skip((page - 1) * size).Take(size);
+            var mockLogger = new Mock<ILogger<ConcertsController>>();
             var mockRepo = new Mock<IConcertRepository>();
-            mockRepo.Setup(c => c.GetConcert(testId))
-                .ReturnsAsync(GetTestConcerts().FirstOrDefault(p => p.Id == testId));
-            var controller = new ConcertsController(mockRepo.Object);
+            mockRepo.Setup(c => c.GetAllConcerts(page, size))
+                .Returns(testConcerts);
+            var controller = new ConcertsController(mockRepo.Object, mockLogger.Object);
 
             // Act
-            var result = await controller.GetConcert(testId);
+            var result = controller.GetConcert(page, size);
 
             // Assert
-            var requestResult = Assert.IsType<OkObjectResult>(result);
-            var model = Assert.IsType<Concert>(requestResult.Value);
-            Assert.Equal(testId, model.Id);
-            Assert.Equal(testId, model.VenueId);
-            Assert.Equal(testId, model.PerfomerId);
-            Assert.Equal(DateTime.Parse("01.01.2020"), model.Date);
+           // var requestResult = Assert.IsType<IEnumerable<Concert>>(result);
+            var model = Assert.IsAssignableFrom<IEnumerable<Concert>>(
+                result);
+            Assert.Equal(2, model.Count());
         }
 
-        [Fact]
-        public async Task GetConcertReturnsBadRequestByIdTest()
-        {
-            // Arrange
-            int testId = 1;
-            var mockRepo = new Mock<IConcertRepository>();
-            mockRepo.Setup(c => c.GetConcert(testId))
-                .ReturnsAsync(GetTestConcerts().FirstOrDefault(p => p.Id == testId));
-            var controller = new ConcertsController(mockRepo.Object);
-            controller.ModelState.AddModelError("error", "some error");
+        /* [Fact]
+         public async Task GetConcertReturnsConcertByIdTest()
+         {
+             // Arrange
+             int testId = 1;
+             var mockRepo = new Mock<IConcertRepository>();
+             mockRepo.Setup(c => c.GetConcert(testId))
+                 .ReturnsAsync(GetTestConcerts().FirstOrDefault(p => p.Id == testId));
+             var controller = new ConcertsController(mockRepo.Object);
 
-            // Act
-            var result = await controller.GetConcert(testId);
+             // Act
+             var result = await controller.GetConcert(testId);
 
-            // Assert
-            Assert.IsType<BadRequestObjectResult>(result);
-            //var model = Assert.IsType<Perfomer>(viewResult.Value);
-            //Assert.Equal("Group One", model.Name);
-            //Assert.Equal(testId, model.Id);
-        }
+             // Assert
+             var requestResult = Assert.IsType<OkObjectResult>(result);
+             var model = Assert.IsType<Concert>(requestResult.Value);
+             Assert.Equal(testId, model.Id);
+             Assert.Equal(testId, model.VenueId);
+             Assert.Equal(testId, model.PerfomerId);
+             Assert.Equal(DateTime.Parse("01.01.2020"), model.Date);
+         }
 
-        [Fact]
-        public async Task GetConcertReturnsNotFoundByIdTest()
-        {
-            // Arrange
-            int testId = 0;
-            var mockRepo = new Mock<IConcertRepository>();
-            mockRepo.Setup(c => c.GetConcert(testId))
-                .ReturnsAsync(GetTestConcerts().FirstOrDefault(p => p.Id == testId));
-            var controller = new ConcertsController(mockRepo.Object);
+         [Fact]
+         public async Task GetConcertReturnsBadRequestByIdTest()
+         {
+             // Arrange
+             int testId = 1;
+             var mockRepo = new Mock<IConcertRepository>();
+             mockRepo.Setup(c => c.GetConcert(testId))
+                 .ReturnsAsync(GetTestConcerts().FirstOrDefault(p => p.Id == testId));
+             var controller = new ConcertsController(mockRepo.Object);
+             controller.ModelState.AddModelError("error", "some error");
 
-            // Act
-            var result = await controller.GetConcert(testId);
+             // Act
+             var result = await controller.GetConcert(testId);
 
-            // Assert
-            Assert.IsType<NotFoundResult>(result);
+             // Assert
+             Assert.IsType<BadRequestObjectResult>(result);
+             //var model = Assert.IsType<Perfomer>(viewResult.Value);
+             //Assert.Equal("Group One", model.Name);
+             //Assert.Equal(testId, model.Id);
+         }
 
-        }
+         [Fact]
+         public async Task GetConcertReturnsNotFoundByIdTest()
+         {
+             // Arrange
+             int testId = 0;
+             var mockRepo = new Mock<IConcertRepository>();
+             mockRepo.Setup(c => c.GetConcert(testId))
+                 .ReturnsAsync(GetTestConcerts().FirstOrDefault(p => p.Id == testId));
+             var controller = new ConcertsController(mockRepo.Object);
 
+             // Act
+             var result = await controller.GetConcert(testId);
+
+             // Assert
+             Assert.IsType<NotFoundResult>(result);
+
+         }
+         */
 
         private List<Concert> GetTestConcerts()
         {

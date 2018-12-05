@@ -3,6 +3,7 @@ using ConcertsService.Data;
 using ConcertsService.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Moq;
 using System;
@@ -22,12 +23,13 @@ namespace XUnitTest.Controllers.ConcertsControllerTests
             // Arrange
             int testId = 1;
             Concert concert = GetTestConcerts().FirstOrDefault(p => p.Id == testId);
+            var mockLogger = new Mock<ILogger<ConcertsController>>();
             var mockRepo = new Mock<IConcertRepository>();
             mockRepo.Setup(c => c.AddConcert(concert))
                 .Returns(EntityState.Added);
             mockRepo.Setup(c => c.SaveChanges())
                 .Returns(Task.CompletedTask);
-            var controller = new ConcertsController(mockRepo.Object);
+            var controller = new ConcertsController(mockRepo.Object, mockLogger.Object);
 
             // Act
             var result = await controller.PostConcert(concert);
@@ -46,7 +48,8 @@ namespace XUnitTest.Controllers.ConcertsControllerTests
         {
             // Arrange & Act
             var mockRepo = new Mock<IConcertRepository>();
-            var controller = new ConcertsController(mockRepo.Object);
+            var mockLogger = new Mock<ILogger<ConcertsController>>();
+            var controller = new ConcertsController(mockRepo.Object, mockLogger.Object);
             controller.ModelState.AddModelError("error", "some error");
 
             // Act

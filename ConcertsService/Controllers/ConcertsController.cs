@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ConcertsService.Models;
 using ConcertsService.Data;
+using Microsoft.Extensions.Logging;
 
 namespace ConcertsService.Controllers
 {
@@ -15,49 +16,37 @@ namespace ConcertsService.Controllers
     public class ConcertsController : ControllerBase
     {
         private readonly IConcertRepository _repo;
+        private readonly ILogger _logger;
 
-        public ConcertsController(IConcertRepository repo)
+        public ConcertsController(IConcertRepository repo, ILogger<ConcertsController> logger)
         {
             _repo = repo;
+            _logger = logger;
         }
 
         // GET: api/Concerts
         [HttpGet]
-        public IEnumerable<Concert> GetConcert([FromQuery] int page = 1, [FromQuery] int size = 2)
+        public IEnumerable<Concert> GetConcert([FromQuery] int page = 1, [FromQuery] int size = 3)
         {
+            _logger.LogInformation("-> requested GET /concerts");
             return _repo.GetAllConcerts(page, size);
-        }
-
-        // GET: api/Concerts/5
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetConcert([FromRoute] int id)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var concert = await _repo.GetConcert(id);
-
-            if (concert == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(concert);
         }
 
         // PUT: api/Concerts/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutConcert([FromRoute] int id, [FromBody] Concert concert)
         {
+            _logger.LogInformation("-> requested PUT /concerts");
             if (!ModelState.IsValid)
             {
+                _logger.LogError("-> PUT /concerts model is not valid");
+                _logger.LogInformation("-> PUT /concerts returned BadRequest");
                 return BadRequest(ModelState);
             }
 
             if (id != concert.Id)
             {
+                _logger.LogInformation("-> PUT /concerts returned BadRequest");
                 return BadRequest();
             }
 
@@ -71,6 +60,7 @@ namespace ConcertsService.Controllers
             {
                 if (!_repo.ConcertExists(id))
                 {
+                    _logger.LogInformation("-> PUT /concerts returned NotFound");
                     return NotFound();
                 }
                 else
@@ -78,7 +68,7 @@ namespace ConcertsService.Controllers
                     throw;
                 }
             }
-
+            _logger.LogInformation("-> PUT /concerts returned NoContent");
             return NoContent();
         }
 
@@ -86,38 +76,19 @@ namespace ConcertsService.Controllers
         [HttpPost]
         public async Task<IActionResult> PostConcert([FromBody] Concert concert)
         {
+            _logger.LogInformation("-> requested POST /concerts");
             if (!ModelState.IsValid)
             {
+                _logger.LogError("-> POST /concerts model is not valid");
+                _logger.LogInformation("-> POST /concerts returned BadRequest");
                 return BadRequest(ModelState);
             }
 
             _repo.AddConcert(concert);
             await _repo.SaveChanges();
 
+            _logger.LogInformation("-> POST /concerts returned Created with id = {id}", concert.Id);
             return CreatedAtAction("GetConcert", new { id = concert.Id }, concert);
         }
-
-        // DELETE: api/Concerts/5
-      /*  [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteConcert([FromRoute] int id)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var concert = await _context.Concert.FindAsync(id);
-            if (concert == null)
-            {
-                return NotFound();
-            }
-
-            _context.Concert.Remove(concert);
-            await _context.SaveChangesAsync();
-
-            return Ok(concert);
-        }*/
-
-        
     }
 }

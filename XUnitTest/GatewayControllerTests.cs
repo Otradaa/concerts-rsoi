@@ -65,20 +65,86 @@ namespace XUnitTest
             bool success = true;
             var mockLogger = new Mock<ILogger<ConcertsController>>();
             var mockService = new Mock<IGatewayService>();
+            
+            mockService.Setup(c => c.PostConcert(It.IsAny<Concert>()))
+                .ReturnsAsync((true,GetTestConcerts()[0]));
+            mockService.Setup(c => c.PutSchedule(It.IsAny<Schedule>()))
+                .ReturnsAsync(false);
+            var controller = new ConcertsController(mockService.Object, mockLogger.Object);
+
+            // Act
+            var result = await controller.Post(concert:null);
+
+            // Assert
+            var requestResult = Assert.IsType<BadRequestResult>(result);
+            
+        }
+
+        [Fact]
+        public async Task PostGatewayReturnsCreatedAtActionResult()
+        {
+            int testId = 1;
+            bool success = true;
+            var mockLogger = new Mock<ILogger<ConcertsController>>();
+            var mockService = new Mock<IGatewayService>();
             Schedule schedule = new Schedule();
-            mockService.Setup(c => c.PostSchedule(schedule))
+            mockService.Setup(c => c.PostSchedule(It.IsAny<Schedule>()))
                 .ReturnsAsync(true);
             Concert concert = GetTestConcerts()[0];
-            mockService.Setup(c => c.PostConcert(concert))
-                .ReturnsAsync((true,concert));
+            mockService.Setup(c => c.PostConcert(It.IsAny<Concert>()))
+                .ReturnsAsync((true, concert));
             var controller = new ConcertsController(mockService.Object, mockLogger.Object);
 
             // Act
             var result = await controller.Post(concert);
 
             // Assert
+            var requestResult = Assert.IsType<CreatedAtActionResult>(result);
+
+        }
+
+        [Fact]
+        public async Task PutGatewayReturnsBadRequestResult()
+        {
+            int testId = 1;
+            bool success = true;
+            var mockLogger = new Mock<ILogger<ConcertsController>>();
+            var mockService = new Mock<IGatewayService>();
+            mockService.Setup(c => c.PutConcert(testId, It.IsAny<Concert>()))
+                .ReturnsAsync(true);
+            mockService.Setup(c => c.PutSchedule(It.IsAny<Schedule>()))
+                .ReturnsAsync(false);
+            var controller = new ConcertsController(mockService.Object, mockLogger.Object);
+
+            // Act
+            var result = await controller.Put(testId,GetTestConcerts()[0]);
+
+            // Assert
             var requestResult = Assert.IsType<BadRequestResult>(result);
-            
+
+        }
+
+        [Fact]
+        public async Task PutGatewayReturnsNoContentResult()
+        {
+            int testId = 1;
+            bool success = true;
+            var mockLogger = new Mock<ILogger<ConcertsController>>();
+            var mockService = new Mock<IGatewayService>();
+            Schedule schedule = new Schedule();
+            mockService.Setup(c => c.PutSchedule(It.IsAny<Schedule>()))
+                .ReturnsAsync(true);
+            Concert concert = GetTestConcerts()[0];
+            mockService.Setup(c => c.PutConcert(testId, It.IsAny<Concert>()))
+                .ReturnsAsync(true);
+            var controller = new ConcertsController(mockService.Object, mockLogger.Object);
+
+            // Act
+            var result = await controller.Put(testId,concert);
+
+            // Assert
+            var requestResult = Assert.IsType<NoContentResult>(result);
+
         }
 
         private Venue GetVenue(int id)

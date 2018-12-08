@@ -31,8 +31,10 @@ namespace Gateway.Services
 
         public async Task<List<Concert>> GetAll(int page, int size)
         {
-            var request = new HttpRequestMessage(new HttpMethod("GET"),
-                _remoteServiceBaseUrl+$"/concerts?page={page}&size={size}");
+            string url = _remoteServiceBaseUrl + $"/concerts";
+            if (page > 0 && size > 0)
+                url += $"?page={page}&size={size}";
+            var request = new HttpRequestMessage(new HttpMethod("GET"), url);
             var response = await _httpClient.SendAsync(request);
             return await response.Content.ReadAsAsync<List<Concert>>();
         }

@@ -26,7 +26,7 @@ namespace ConcertsService.Controllers
 
         // GET: api/Concerts
         [HttpGet]
-        public IEnumerable<Concert> GetConcert([FromQuery] int page = 1, [FromQuery] int size = 3)
+        public IEnumerable<Concert> GetConcert([FromQuery] int page, [FromQuery] int size)
         {
             _logger.LogInformation("-> requested GET /concerts");
             return _repo.GetAllConcerts(page, size);

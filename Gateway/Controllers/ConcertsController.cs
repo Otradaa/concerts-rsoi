@@ -28,21 +28,20 @@ namespace Gateway.Controllers
 
         // GET: api/Concerts
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] int page=1, [FromQuery] int pageSize=2)
+        public async Task<IActionResult> Get([FromQuery] int page, [FromQuery] int pageSize)
         {
             _logger.LogInformation("-> requested GET /concerts?page={page}&pageSize={pageSize}", page, pageSize);
-
             List<Concert> concerts = await _gateway.GetConcerts(page, pageSize);
             if (concerts != null)
             {
                 List<ConcertRequest> fullconcerts = new List<ConcertRequest>();
                 foreach (var concert in concerts)
                 {
-                    _logger.LogInformation("-> request to GET /perfomers/{0}}", concert.PerfomerId);
+                    _logger.LogInformation($"-> request to GET /perfomers/{concert.PerfomerId}");
                     Perfomer perfomer = await _gateway.GetPerfomerById(concert.PerfomerId);
                     if (perfomer != null)
                     {
-                        _logger.LogInformation("-> request to GET /venues/{0}}", concert.VenueId);
+                        _logger.LogInformation("-> request to GET /venues/{0}", concert.VenueId);
                         Venue venue = await _gateway.GetVenueById(concert.VenueId);
                         //validate?
                         if (venue != null)

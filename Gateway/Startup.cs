@@ -30,6 +30,14 @@ namespace Gateway
             services.AddHttpClient<IVenuesService, VenuesService>();
             services.AddHttpClient<IPerfomersService, PerfomersService>();
             services.AddSingleton<IGatewayService, GatewayService>();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -44,6 +52,7 @@ namespace Gateway
                 app.UseHsts();
             }
 
+            app.UseCors("CorsPolicy");
             app.UseHttpsRedirection();
             app.UseMvc();
         }

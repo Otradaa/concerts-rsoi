@@ -1,6 +1,4 @@
 
-namespace FrontApp.ClientApp.src.app
-{
   export class Concert {
     constructor(
       public id?: number,
@@ -9,4 +7,4 @@ namespace FrontApp.ClientApp.src.app
       public venueAdress?: string,
       public date?: Date) { }
   }
-}
+

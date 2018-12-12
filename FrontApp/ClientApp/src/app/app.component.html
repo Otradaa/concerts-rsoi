@@ -1,17 +1,18 @@
-<h1>Список концертов</h1>
-<input type="button" value="Добавить" class="btn btn-default" (click)="add()" />
-<table *ngIf="tableMode; else create" class="table table-striped">
-  <thead>
-    <tr>
-      <td>Исполнитель</td>
-      <td>Площадка</td>
-      <td>Адрес</td>
-      <td>Дата</td>
-      <td></td>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let p of concerts">
+<body>
+  <h1>Список концертов</h1>
+  <input type="button" value="Добавить" class="btn btn-default" (click)="add()" />
+  <table *ngIf="tableMode; else create" class="table table-striped">
+    <thead>
+      <tr>
+        <td>Исполнитель</td>
+        <td>Площадка</td>
+        <td>Адрес</td>
+        <td>Дата</td>
+        <td></td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let p of concerts">
         <td>{{p?.perfomerName}}</td>
         <td>{{p?.venueName}}</td>
         <td>{{p?.address}}</td>
@@ -19,9 +20,10 @@
         <td>
           <button class="btn btn-sm btn-primary" (click)="editConcert(p)">Изменить</button>
         </td>
-    </tr>
-  </tbody>
-</table>
+      </tr>
+    </tbody>
+  </table>
+</body>
 
 <!--шаблон для редактирования-->
 <ng-template #edit>

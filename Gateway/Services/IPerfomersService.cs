@@ -9,5 +9,6 @@ namespace Gateway.Services
     public interface IPerfomersService
     {
         Task<Perfomer> GetById(int id);
+        Task<List<Perfomer>> GetAll();
     }
 }

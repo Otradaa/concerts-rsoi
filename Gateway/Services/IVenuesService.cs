@@ -9,6 +9,7 @@ namespace Gateway.Services
     public interface IVenuesService
     {
         Task<Venue> GetById(int id);
+        Task<List<Venue>> GetAll();
         Task<bool> PostSchedule(Schedule schedule);
         Task<bool> PutSchedule(Schedule schedule);
     }

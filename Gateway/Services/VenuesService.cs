@@ -35,6 +35,15 @@ namespace Gateway.Services
             return await response.Content.ReadAsAsync<Venue>();
         }
 
+        public async Task<List<Venue>> GetAll()
+        {
+            string url = _remoteServiceBaseUrl + $"/venues";
+            
+            var request = new HttpRequestMessage(new HttpMethod("GET"), url);
+            var response = await _httpClient.SendAsync(request);
+            return await response.Content.ReadAsAsync<List<Venue>>();
+        }
+
         public async Task<bool> PostSchedule(Schedule schedule)
         {
             var request = new HttpRequestMessage(new HttpMethod("POST"),

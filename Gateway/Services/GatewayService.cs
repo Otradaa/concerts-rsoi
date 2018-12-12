@@ -25,6 +25,15 @@ namespace Gateway.Services
             return await concertService.GetAll(page, size);
         }
 
+        public async Task<List<Perfomer>> GetPerfomers()
+        {
+            return await perfomersService.GetAll();
+        }
+        public async Task<List<Venue>> GetVenues()
+        {
+            return await venuesService.GetAll();
+        }
+
         public async Task<Perfomer> GetPerfomerById(int id)
         {
             return await perfomersService.GetById(id);

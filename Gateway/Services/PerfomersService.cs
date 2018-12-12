@@ -32,5 +32,13 @@ namespace Gateway.Services
             var response = await _httpClient.SendAsync(request);
             return await response.Content.ReadAsAsync<Perfomer>();
         }
+
+        public async Task<List<Perfomer>> GetAll()
+        {
+            string url = _remoteServiceBaseUrl + $"/perfomers";
+            var request = new HttpRequestMessage(new HttpMethod("GET"), url);
+            var response = await _httpClient.SendAsync(request);
+            return await response.Content.ReadAsAsync<List<Perfomer>>();
+        }
     }
 }

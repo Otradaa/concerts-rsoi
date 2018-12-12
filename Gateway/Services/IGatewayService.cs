@@ -9,6 +9,8 @@ namespace Gateway.Services
     public interface IGatewayService
     {
         Task<List<Concert>> GetConcerts(int page, int size);
+        Task<List<Perfomer>> GetPerfomers();
+        Task<List<Venue>> GetVenues();
         Task<Perfomer> GetPerfomerById(int id);
         Task<Venue> GetVenueById(int id);
         Task<(bool, Concert)> PostConcert(Concert concert);

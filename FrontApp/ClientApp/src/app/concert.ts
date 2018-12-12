@@ -2,9 +2,8 @@
   export class Concert {
     constructor(
       public id?: number,
-      public perfomerName?: string,
-      public venueName?: string,
-      public venueAdress?: string,
+      public perfomerId?: number,
+      public venueId?: number,
       public date?: Date) { }
   }
 

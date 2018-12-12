@@ -1,10 +1,68 @@
-<div class='container-fluid'>
-  <div class='row'>
-    <div class='col-sm-3'>
-      <app-nav-menu></app-nav-menu>
-    </div>
-    <div class='col-sm-9 body-content'>
-      <router-outlet></router-outlet>
-    </div>
+<h1>Список концертов</h1>
+<input type="button" value="Добавить" class="btn btn-default" (click)="add()" />
+<table *ngIf="tableMode; else create" class="table table-striped">
+  <thead>
+    <tr>
+      <td>Исполнитель</td>
+      <td>Площадка</td>
+      <td>Адрес</td>
+      <td>Дата</td>
+      <td></td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let p of concerts">
+        <td>{{p?.perfomerName}}</td>
+        <td>{{p?.venueName}}</td>
+        <td>{{p?.address}}</td>
+        <td>{{p?.date}}</td>
+        <td>
+          <button class="btn btn-sm btn-primary" (click)="editConcert(p)">Изменить</button>
+        </td>
+    </tr>
+  </tbody>
+</table>
+
+<!--шаблон для редактирования-->
+<ng-template #edit>
+  <td>
+    <input type="text" [(ngModel)]="concert.perfomerName" class="form-control" />
+  </td>
+  <td>
+    <input type="text" [(ngModel)]="concert.venueName" class="form-control" />
+  </td>
+  <td>
+    <input type="text" [(ngModel)]="concert.address" class="form-control" />
+  </td>
+  <td>
+    <input type="text" [(ngModel)]="concert.date" class="form-control" />
+  </td>
+  <td>
+    <input type="button" value="Сохранить" (click)="save()" class="btn btn-sm btn-success" />
+    <input type="button" value="Отмена" (click)="cancel()" class="btn btn-sm btn-warning" />
+  </td>
+</ng-template>
+
+<!--шаблон для добавления-->
+<ng-template #create>
+  <div class="form-group">
+    <label>Исполнитель</label>
+    <input type="text" [(ngModel)]="concert.perfomerName" class="form-control" />
   </div>
-</div>
+  <div class="form-group">
+    <label>Площадка</label>
+    <input type="text" [(ngModel)]="concert.venueName" class="form-control" />
+  </div>
+  <div class="form-group">
+    <label>Адрес</label>
+    <input type="text" [(ngModel)]="concert.address" class="form-control" />
+  </div>
+  <div class="form-group">
+    <label>Дата</label>
+    <input type="text" [(ngModel)]="concert.date" class="form-control" />
+  </div>
+  <div>
+    <input type="button" value="Сохранить" (click)="save()" class="btn btn-success" />
+    <input type="button" value="Отмена" (click)="cancel()" class="btn btn-warning" />
+  </div>
+</ng-template>

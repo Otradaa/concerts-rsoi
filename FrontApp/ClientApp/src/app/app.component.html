@@ -49,15 +49,19 @@
 <ng-template #create>
   <div class="form-group">
     <label>Исполнитель</label>
-    <input type="text" [(ngModel)]="concert.perfomerName" class="form-control" />
+    <md-input-container>
+      <md-select placeholder="Исполнитель" ng-model="concert.perfomerId" >
+        <md-option ng-value="perfomer.id" ng-repeat="perfomer in perfomers">{{ perfomer.name }}</md-option>
+      </md-select>
+    </md-input-container>
   </div>
   <div class="form-group">
     <label>Площадка</label>
-    <input type="text" [(ngModel)]="concert.venueName" class="form-control" />
-  </div>
-  <div class="form-group">
-    <label>Адрес</label>
-    <input type="text" [(ngModel)]="concert.address" class="form-control" />
+    <md-input-container>
+      <md-select placeholder="Площадка" ng-model="concert.venueId" > <!--(venId) ="changeVenue(venue.id)"-->
+        <md-option ng-value="venue.id" ng-repeat="venue in venues">{{ venue.name }}</md-option>
+      </md-select>
+    </md-input-container>
   </div>
   <div class="form-group">
     <label>Дата</label>

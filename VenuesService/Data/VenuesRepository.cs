@@ -16,6 +16,11 @@ namespace VenuesService.Data
             _context = context;
         }
 
+        public IEnumerable<Venue> GetAllVenues()
+        {
+            return _context.Venue;
+        }
+
         public async Task<Venue> GetVenue(int id)
         {
             return await _context.Venue.FindAsync(id);

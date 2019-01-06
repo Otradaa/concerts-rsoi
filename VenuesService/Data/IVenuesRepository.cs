@@ -9,6 +9,7 @@ namespace VenuesService.Data
 {
     public interface IVenuesRepository
     {
+        IEnumerable<Venue> GetAllVenues();
         Task<Venue> GetVenue(int id);
         Task<Schedule> GetSchedule(int id);
         Task SaveChanges();

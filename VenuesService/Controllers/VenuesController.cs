@@ -24,6 +24,13 @@ namespace VenuesService.Controllers
             _logger = logger;
         }
 
+        [HttpGet]
+        public IEnumerable<Venue> GetVenue()
+        {
+            _logger.LogInformation("-> requested GET /venues");
+            return _repo.GetAllVenues();
+        }
+
         // GET: api/Venues/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetVenue([FromRoute] int id)

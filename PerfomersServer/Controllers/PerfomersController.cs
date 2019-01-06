@@ -24,6 +24,13 @@ namespace PerfomersServer.Controllers
             _logger = logger;
         }
 
+        [HttpGet]
+        public IEnumerable<Perfomer> GetPerfomer()
+        {
+            _logger.LogInformation("-> requested GET /perfomers");
+            return _repository.GetAllPerfomers();
+        }
+
         // GET: api/Perfomers/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPerfomer([FromRoute] int id)

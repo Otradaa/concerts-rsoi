@@ -9,5 +9,6 @@ namespace PerfomersServer.Data
     public interface IRepository
     {
         Task<Perfomer> GetPerfomer(int id);
+        IEnumerable<Perfomer> GetAllPerfomers();
     }
 }

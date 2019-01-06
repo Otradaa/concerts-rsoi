@@ -19,6 +19,11 @@ namespace PerfomersServer.Data
             _context = context;
         }*/
 
+        public IEnumerable<Perfomer> GetAllPerfomers()
+        {
+            return _context.Perfomer;
+        }
+
         public async Task<Perfomer> GetPerfomer(int id)
         {
             return await _context.Perfomer.FindAsync(id);

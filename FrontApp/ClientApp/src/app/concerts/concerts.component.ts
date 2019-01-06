@@ -14,13 +14,18 @@ export class ConcertsComponent implements OnInit {
   concert: Concert = new Concert();   
   perfomer: Perfomer = new Perfomer();
   venue: Venue = new Venue();
-  concerts: ConcertGet[];              
+  concerts: ConcertGet[];
+  selectedConcert: ConcertGet;
   venues: Venue[];
   perfomers: Perfomer[];
 
   constructor() { }
 
   ngOnInit() {
+  }
+
+  onSelect(selConcert: ConcertGet): void {
+    this.selectedConcert = selConcert;
   }
 
 }

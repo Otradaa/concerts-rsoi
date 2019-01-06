@@ -13,13 +13,15 @@
     </thead>
     <tbody>
       <tr *ngFor="let p of concerts">
-        <td>{{p?.perfomerName}}</td>
-        <td>{{p?.venueName}}</td>
-        <td>{{p?.address}}</td>
-        <td>{{p?.date}}</td>
-        <td>
-          <button class="btn btn-sm btn-primary" (click)="editConcert(p)">Изменить</button>
-        </td>
+        <ng-template [ngIf]="concert?.id != p.id" [ngIfElse]="edit">
+          <td>{{p?.perfomerName}}</td>
+          <td>{{p?.venueName}}</td>
+          <td>{{p?.venueAddress}}</td>
+          <td>{{p?.date}}</td>
+          <td>
+            <button class="btn btn-sm btn-primary" (click)="editConcert(p)">Изменить</button>
+          </td>
+        </ng-template>
       </tr>
     </tbody>
   </table>
@@ -28,47 +30,114 @@
 <!--шаблон для редактирования-->
 <ng-template #edit>
   <td>
-    <input type="text" [(ngModel)]="concert.perfomerName" class="form-control" />
+    <label>Исполнитель</label>
+    <!-- <input type="text" [(ngModel)]="product.name" class="form-control" />
+
+    <select ng-model="perfomer" ng-options="for x in perfomers">{{x.name}}</select>
+       -->
+
+    <select class="form-control" name="perfomer"
+            [(ngModel)]="concert.perfomerId" #phoneCompany="ngModel">
+      <option *ngFor="let comp of perfomers" [value]="comp.id">
+        {{comp.name}}
+      </option>
+    </select>
+
+    {{concert.perfomerId}}
+
   </td>
   <td>
-    <input type="text" [(ngModel)]="concert.venueName" class="form-control" />
+    <label>Площадка</label>
+    <select class="form-control" name="venue"
+            [(ngModel)]="concert.venueId">
+      <option *ngFor="let comp of venues" [value]="comp.id">
+        {{comp.name}}
+      </option>
+    </select>
+
+    {{concert.venueId}}
   </td>
   <td>
-    <input type="text" [(ngModel)]="concert.address" class="form-control" />
+    <label>Дата</label>
+    <input type="datetime-local" [(ngModel)]="concert.date" class="form-control" required>
+    <span class="validity"></span>
   </td>
-  <td>
+  <!--<td>
     <input type="text" [(ngModel)]="concert.date" class="form-control" />
-  </td>
+  </td>-->
   <td>
     <input type="button" value="Сохранить" (click)="save()" class="btn btn-sm btn-success" />
     <input type="button" value="Отмена" (click)="cancel()" class="btn btn-sm btn-warning" />
   </td>
 </ng-template>
 
+
+
 <!--шаблон для добавления-->
 <ng-template #create>
   <div class="form-group">
     <label>Исполнитель</label>
-    <md-input-container>
-      <md-select placeholder="Исполнитель" ng-model="concert.perfomerId" >
-        <md-option ng-value="perfomer.id" ng-repeat="perfomer in perfomers">{{ perfomer.name }}</md-option>
-      </md-select>
-    </md-input-container>
+    <!-- <input type="text" [(ngModel)]="product.name" class="form-control" />
+
+  <select ng-model="perfomer" ng-options="for x in perfomers">{{x.name}}</select>
+     -->
+
+    <select class="form-control" id="perfomer" name="perfomer"
+            [(ngModel)]="concert.perfomerId" #phoneCompany="ngModel" required>
+      <option selected disabled hidden>Choose here</option>
+      <option *ngFor="let comp of perfomers" [value]="comp.id">
+        {{comp.name}}
+      </option>
+    </select>
+
+    {{concert.perfomerId}}
+
+    <div *ngIf="perfomer.invalid && (perfomer.dirty || perfomer.touched)"
+         class="alert alert-danger">
+
+      <div *ngIf="perfomer.errors.required">
+        Поле обязательно к заполнению.
+      </div>
+
+    </div>
+
+
+
   </div>
+
   <div class="form-group">
     <label>Площадка</label>
-    <md-input-container>
-      <md-select placeholder="Площадка" ng-model="concert.venueId" > <!--(venId) ="changeVenue(venue.id)"-->
-        <md-option ng-value="venue.id" ng-repeat="venue in venues">{{ venue.name }}</md-option>
-      </md-select>
-    </md-input-container>
+    <select class="form-control" name="venue"
+            [(ngModel)]="concert.venueId">
+      <option *ngFor="let comp of venues" [value]="comp.id">
+        {{comp.name}}
+      </option>
+    </select>
+
+    {{concert.venueId}}
+  </div>
+
+  <div class="form-group">
+    <label>Дата</label>
+    <input type="datetime-local" [(ngModel)]="concert.date" class="form-control" required>
+    <span class="validity"></span>
+  </div>
+  {{concert.date}}
+  <!--
+
+  <div class="form-group">
+    <label>Площадка</label>
+    <input type="text" [(ngModel)]="product.company" class="form-control" />
   </div>
   <div class="form-group">
     <label>Дата</label>
     <input type="text" [(ngModel)]="concert.date" class="form-control" />
-  </div>
+  </div>-->
   <div>
-    <input type="button" value="Сохранить" (click)="save()" class="btn btn-success" />
+    <input type="submit" value="Сохранить" (click)="save()" class="btn btn-success" />
     <input type="button" value="Отмена" (click)="cancel()" class="btn btn-warning" />
   </div>
 </ng-template>
+
+
+

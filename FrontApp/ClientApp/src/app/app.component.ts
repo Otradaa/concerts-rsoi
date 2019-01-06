@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+
 import { ConcertsService } from './concerts.service';
 import { Concert } from './concert';
 import { Perfomer } from './perfomer';
@@ -11,9 +12,12 @@ import { ConcertGet } from './concertGet';
   styleUrls: ['./app.component.css'],
   providers: [ConcertsService]
 })
+
 export class AppComponent implements OnInit {
 
   concert: Concert = new Concert();   // изменяемый товар
+  perfomer: Perfomer = new Perfomer();
+  venue: Venue = new Venue();
   concerts: ConcertGet[];                // массив товаров
   venues: Venue[];
   perfomers: Perfomer[];
@@ -38,7 +42,7 @@ export class AppComponent implements OnInit {
   save() {
     if (this.concert.id == null) {
       this.dataService.createConcert(this.concert)
-        .subscribe((data: Concert) => this.concerts.push(data));
+        .subscribe(data => this.loadConcerts());//(data: Concert) => this.concerts.push(data));
     } else {
       this.dataService.updateConcert(this.concert)
         .subscribe(data => this.loadConcerts());
@@ -61,10 +65,10 @@ export class AppComponent implements OnInit {
     this.concert = new Concert();
     this.tableMode = true;
   }
- /* delete(p: Concert) {
-    this.dataService.deleteConcert(p.id)
-      .subscribe(data => this.loadConcerts());
-  }*/
+  /* delete(p: Concert) {
+     this.dataService.deleteConcert(p.id)
+       .subscribe(data => this.loadConcerts());
+   }*/
   add() {
     this.cancel();
     this.tableMode = false;

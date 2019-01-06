@@ -5,6 +5,6 @@ export class ConcertGet
       public id?: number,
       public perfomerName?: string,
       public venueName?: string,
-      public venueAdress?: string,
+      public venueAddress?: string,
       public date?: Date) { }
   }

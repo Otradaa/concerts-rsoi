@@ -4,6 +4,7 @@ import { Concert } from '../concert';
 import { Perfomer } from '../perfomer';
 import { Venue } from '../venue';
 import { ConcertGet } from '../concertGet';
+import { MessageService } from '../message.service';
 
 @Component({
   selector: 'app-concerts',
@@ -21,7 +22,8 @@ export class ConcertsComponent implements OnInit {
   perfomers: Perfomer[];
   changing = false;
 
-  constructor(private dataService: ConcertsService) { }
+  constructor(private dataService: ConcertsService,
+    public messageService: MessageService) { }
 
   ngOnInit() {
     this.loadConcerts();    // загрузка данных при старте компонента
@@ -39,6 +41,7 @@ export class ConcertsComponent implements OnInit {
 
   onSelect(selConcert: ConcertGet): void {
     this.selectedConcert = selConcert;
+    
   }
 
 }

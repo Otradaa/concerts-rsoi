@@ -1,0 +1,81 @@
+<div class="container">
+  <div [hidden]="submitted">
+    <h1>Create Form</h1>
+    <form (ngSubmit)="onSubmit()"  #createForm="ngForm">
+
+      <div class="form-group">
+        <label for="perfomer">Исполнитель</label>
+        <select class="form-control" id="perfomer"
+                required
+                [(ngModel)]="concert.perfomerId" name="perfomer"
+                #perfomer="ngModel">
+          <option *ngFor="let pow of fperfomers"
+                  [value]="pow.id">
+            {{pow.name}}
+          </option>
+        </select>
+        <div [hidden]="perfomer.valid || perfomer.pristine" class="alert alert-danger">
+          Perfomer is required
+        </div>
+        {{concert.perfomerId}}
+      </div>
+
+      <div class="form-group">
+        <label for="venue">Площадка</label>
+        <select class="form-control" id="venue"
+                required
+                [(ngModel)]="concert.venueId" name="venue"
+                #venue="ngModel">
+          <option *ngFor="let pow of fvenues"
+                  [value]="pow.id">
+            {{pow.name}}
+          </option>
+        </select>
+        <div [hidden]="venue.valid || venue.pristine" class="alert alert-danger">
+          Venue is required
+        </div>
+        {{concert.venueId}}
+      </div>
+
+      <div class="form-group">
+        <label for="concertDate">Дата</label>
+        <input type="datetime-local" class="form-control" id="concertDate"
+               required
+               [(ngModel)]="concert.date" name="concertDate"
+               #concertDate="ngModel">
+        <div [hidden]="concertDate.valid || concertDate.pristine"
+             class="alert alert-danger">
+          Date is required
+        </div>
+        {{concert.date}}
+      </div>
+
+      <button type="submit" class="btn btn-success" [disabled]="!createForm.form.valid">Submit</button>
+      <button type="button" class="btn btn-default" routerLink="/concerts">
+        Назад
+      </button>
+      <br>
+      <!--<button type="button" class="btn btn-default" (click)="newHero(); heroForm.reset()">New Hero</button>-->
+    </form>
+  </div>
+  <div [hidden]="!submitted">
+    <h2>You submitted the following:</h2>
+    {{concert.id}}
+    <div class="row">
+      <div class="col-xs-3">Исполнитель</div>
+      <div class="col-xs-9">{{ concert.perfomerId }}</div>
+    </div>
+    <div class="row">
+      <div class="col-xs-3">Площадка</div>
+      <div class="col-xs-9">{{ concert.venueId }}</div>
+    </div>
+    <div class="row">
+      <div class="col-xs-3">Дата</div>
+      <div class="col-xs-9">{{ concert.date }}</div>
+    </div>
+    <button type="button" class="btn btn-default" routerLink="/concerts">
+      Назад
+    </button>
+    <br>
+  </div>
+</div>

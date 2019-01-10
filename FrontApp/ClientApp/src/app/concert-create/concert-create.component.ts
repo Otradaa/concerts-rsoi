@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ConcertsService } from '../concerts.service';
+import { MessageService } from '../message.service';
 
 
 import { Concert } from '../concert';
@@ -20,7 +21,8 @@ export class ConcertCreateComponent implements OnInit {
   submitted = false;
   result;
 
-  constructor(private dataService: ConcertsService) {
+  constructor(private dataService: ConcertsService,
+    public messageService: MessageService) {
     this.dataService.getPerfomers()
       .subscribe((data: Perfomer[]) => this.fperfomers = data);
     this.dataService.getVenues()

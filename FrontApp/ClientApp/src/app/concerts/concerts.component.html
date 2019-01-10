@@ -1,21 +1,58 @@
-<h2>My Heroes</h2>
-<ul class="heroes">
-  <li *ngFor="let hero of heroes"
-      [class.selected]="hero === selectedHero"
-      (click)="onSelect(hero)">
-    <span class="badge">{{hero.id}}</span> {{hero.name}}
-  </li>
-</ul>
+<div [hidden]="changing">
 
-<div *ngIf="selectedHero">
+    <button type="button" class="btn btn-default" routerLink="/concerts/new" >
+      Создать
+    </button>
+ 
 
-  <h2>{{selectedHero.name | uppercase}} Details</h2>
-  <div><span>id: </span>{{selectedHero.id}}</div>
-  <div>
-    <label>
-      name:
-      <input [(ngModel)]="selectedHero.name" placeholder="name">
-    </label>
-  </div>
+  <h2>Concerts!</h2>
+  <!--<ol class="concerts">
+    <li *ngFor="let conc of concerts"
+        [class.selected]="conc === selectedConcert"
+        (click)="onSelect(conc)">
+      <span class="badge">{{hero.id}}</span> {{conc.name}}
+    </li>
+  </ol>-->
+
+  <table class="concerts table table-striped">
+
+
+    <thead>
+
+
+      <tr>
+        <td>Исполнитель</td>
+        <td>Площадка</td>
+        <td>Адрес</td>
+        <td>Дата</td>
+        <td></td>
+      </tr>
+    </thead>
+    <tbody>
+
+
+      <tr *ngFor="let p of concerts"
+          [class.selected]="p === selectedConcert"
+          (click)="onSelect(p)">
+        <td>{{p.perfomerName}}</td>
+        <td>{{p.venueName}}</td>
+        <td>{{p.venueAddress}}</td>
+        <td>{{p.date}}</td>
+        <td>
+          <button type="button" class="btn btn-default" (click)="selectedConcert=p; changing=true;">Изменить</button>
+        </td>
+      </tr>
+
+    </tbody>
+
+  </table>
+
+</div>
+
+<div [hidden]="!changing">
+
+
+  <app-concert-detail [concertInput]="selectedConcert"></app-concert-detail>
+  <button type="button" class="btn btn-default" (click)="changing=false;">Назад</button>
 
 </div>

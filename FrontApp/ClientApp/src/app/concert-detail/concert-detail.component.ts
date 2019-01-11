@@ -6,7 +6,6 @@ import { Concert } from '../concert';
 import { Perfomer } from '../perfomer';
 import { Venue } from '../venue';
 import { ConcertGet } from '../concertGet';
-import { ConcertFull } from '../concertFull';
 
 @Component({
   selector: 'app-concert-detail',

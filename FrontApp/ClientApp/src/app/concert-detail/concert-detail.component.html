@@ -1,11 +1,10 @@
 <div class="container">
   <div [hidden]="submitted">
-    <h1>Hero Form</h1>
+    <h1>Редактирование</h1>
     <form (ngSubmit)="onSubmit()" ng-show="heroForm.reset();" #heroForm="ngForm">
       
       <div class="form-group">
         <label for="perfomer">Исполнитель</label>
-        <div class="col-xs-9">{{ concertInput.perfomerName }}</div>
         <select class="form-control" id="perfomer"
                 required
                 [(ngModel)]="concert.perfomerId" name="perfomer"

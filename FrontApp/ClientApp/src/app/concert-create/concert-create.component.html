@@ -1,7 +1,7 @@
 <div class="container">
   <div [hidden]="submitted">
-    <h1>Create Form</h1>
-    <form (ngSubmit)="onSubmit()"  #createForm="ngForm">
+    <h1>Создание</h1>
+    <form (ngSubmit)="onSubmit()" #createForm="ngForm">
 
       <div class="form-group">
         <label for="perfomer">Исполнитель</label>
@@ -51,9 +51,7 @@
       </div>
 
       <button type="submit" class="btn btn-success" [disabled]="!createForm.form.valid">Submit</button>
-      <button type="button" class="btn btn-default" routerLink="/concerts">
-        Назад
-      </button>
+
       <br>
       <!--<button type="button" class="btn btn-default" (click)="newHero(); heroForm.reset()">New Hero</button>-->
     </form>
@@ -73,9 +71,11 @@
       <div class="col-xs-3">Дата</div>
       <div class="col-xs-9">{{ concert.date }}</div>
     </div>
-    <button type="button" class="btn btn-default" routerLink="/concerts">
-      Назад
-    </button>
+
     <br>
   </div>
+  <button type="button" class="btn btn-default" routerLink="/concerts"
+    (click) ="messageService.clear()">
+    Назад
+  </button>
 </div>

@@ -10,13 +10,15 @@ import { AppComponent } from './app.component';
 import { ConcertsComponent } from './concerts/concerts.component';
 import { ConcertDetailComponent } from './concert-detail/concert-detail.component';
 import { ConcertCreateComponent } from './concert-create/concert-create.component';
+import { MessagesComponent } from './messages/messages.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ConcertsComponent,
     ConcertDetailComponent,
-    ConcertCreateComponent
+    ConcertCreateComponent,
+    MessagesComponent
   ],
   imports: [
     BrowserModule,

@@ -1,7 +1,9 @@
 <div class="container">
+  
   <div [hidden]="submitted">
+    <div *ngIf="error" class="alert alert-danger">{{error}}</div>
     <h1>Создание</h1>
-    <form (ngSubmit)="onSubmit()" #createForm="ngForm">
+    <form (ngSubmit)="onSubmit(createForm)" #createForm="ngForm">
 
       <div class="form-group">
         <label for="perfomer">Исполнитель</label>
@@ -17,7 +19,6 @@
         <div [hidden]="perfomer.valid || perfomer.pristine" class="alert alert-danger">
           Perfomer is required
         </div>
-        {{concert.perfomerId}}
       </div>
 
       <div class="form-group">
@@ -34,7 +35,6 @@
         <div [hidden]="venue.valid || venue.pristine" class="alert alert-danger">
           Venue is required
         </div>
-        {{concert.venueId}}
       </div>
 
       <div class="form-group">
@@ -47,35 +47,38 @@
              class="alert alert-danger">
           Date is required
         </div>
-        {{concert.date}}
       </div>
 
       <button type="submit" class="btn btn-success" [disabled]="!createForm.form.valid">Submit</button>
-
+      <button type="button" class="btn btn-default" routerLink="/concerts"
+              (click)="createForm.reset(); messageService.clear()">
+        Назад
+      </button>
       <br>
       <!--<button type="button" class="btn btn-default" (click)="newHero(); heroForm.reset()">New Hero</button>-->
     </form>
   </div>
   <div [hidden]="!submitted">
     <h2>You submitted the following:</h2>
-    {{concert.id}}
-    <div class="row">
-      <div class="col-xs-3">Исполнитель</div>
-      <div class="col-xs-9">{{ concert.perfomerId }}</div>
+    <div *ngIf="createdConcert">
+      <div class="row">
+        <div class="col-xs-3">Исполнитель</div>
+        <div class="col-xs-9">{{ getPerfomer(createdConcert.perfomerId) }}</div>
+      </div>
+      <div class="row">
+        <div class="col-xs-3">Площадка</div>
+        <div class="col-xs-9">{{ getVenue(createdConcert.venueId) }}</div>
+      </div>
+      <div class="row">
+        <div class="col-xs-3">Дата</div>
+        <div class="col-xs-9">{{ createdConcert.date | date:'dd.MM.yyyy HH:mm'}}</div>
+      </div>
+      <button type="button" class="btn btn-default" routerLink="/concerts"
+              (click)="createForm.reset(); messageService.clear()">
+        Назад
+      </button>
     </div>
-    <div class="row">
-      <div class="col-xs-3">Площадка</div>
-      <div class="col-xs-9">{{ concert.venueId }}</div>
-    </div>
-    <div class="row">
-      <div class="col-xs-3">Дата</div>
-      <div class="col-xs-9">{{ concert.date }}</div>
-    </div>
-
     <br>
   </div>
-  <button type="button" class="btn btn-default" routerLink="/concerts"
-    (click) ="messageService.clear()">
-    Назад
-  </button>
+
 </div>

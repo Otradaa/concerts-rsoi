@@ -26,10 +26,18 @@ namespace ConcertsService.Controllers
 
         // GET: api/Concerts
         [HttpGet]
-        public IEnumerable<Concert> GetConcert([FromQuery] int page, [FromQuery] int size)
+        public ConcertsCount GetConcert([FromQuery] int page, [FromQuery] int size)
         {
             _logger.LogInformation("-> requested GET /concerts");
             return _repo.GetAllConcerts(page, size);
+        }
+
+        [HttpGet]
+        [Route("api/concerts/count")]
+        public async Task<int> GetCount()
+        {
+            _logger.LogInformation("-> requested GET /count");
+            return await _repo.GetCount();
         }
 
         // PUT: api/Concerts/5

@@ -17,16 +17,22 @@ namespace ConcertsService.Data
             _context = context;
         }
 
-        public IEnumerable<Concert> GetAllConcerts(int page, int size)
+        public Task<int> GetCount()
         {
-            IEnumerable<Concert> result;
+            return _context.Concert.CountAsync();
+        }
+
+        public ConcertsCount GetAllConcerts(int page, int size)
+        {
+            ConcertsCount result = new ConcertsCount();
             if (page > 0 && size > 0)
             {
                 int offset = (page - 1) * size;
-                result = _context.Concert.Skip(offset).Take(size);
+                result.concerts = new List<Concert>(_context.Concert.Skip(offset).Take(size));
             }
             else
-                result = _context.Concert;
+                result.concerts = new List<Concert>(_context.Concert);
+            result.count = _context.Concert.Count();
             return result;
         }
 

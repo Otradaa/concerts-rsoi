@@ -1,6 +1,6 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { ConcertsService } from '../concerts.service';
-
+import { NgForm } from '@angular/forms';
 
 import { Concert } from '../concert';
 import { Perfomer } from '../perfomer';
@@ -14,32 +14,64 @@ import { ConcertGet } from '../concertGet';
 })
 export class ConcertDetailComponent implements OnInit {
 
-  @Input() concertInput: ConcertGet = new ConcertGet(1,"","","",new Date());
+  @Output()
+  changed: EventEmitter<boolean> = new EventEmitter<boolean>();
+
+  @Input() concertInput: ConcertGet;
   concert: Concert = new Concert(1);
   fvenues: Venue[];
   fperfomers: Perfomer[];
   submitted = false;
+  intvenue: number;
+  error = '';
+  createdConcert: Concert;
+  perName = '';
+  venName = '';
 
-  onSubmit() {
-    this.submitted = true;
-    this.dataService.updateConcert(this.concert).subscribe((concertN: Concert) => this.concert = concertN);
+  onSubmit(form: NgForm) {
+    this.concert.id = this.concertInput.id;
+
+    if (this.concert.perfomerId === undefined ||
+      this.concert.perfomerId === null)
+      this.getPerfomer();
+    if (this.concert.venueId === undefined ||
+      this.concert.venueId === null)
+      this.getVenue();
+    if (this.concert.date === undefined ||
+      this.concert.date === null)
+      this.concert.date = this.concertInput.date;
+
+    this.dataService.updateConcert(this.concert).subscribe(result => {
+      form.reset();
+      this.submitted = true;
+      this.error = '';
+    },
+      error => {
+        this.error = "Server: Date is invalid";
+        //this.error = error;
+      });
   }
 
   constructor(private dataService: ConcertsService) {
-    this.concert.id = this.concertInput.id;
+
     this.dataService.getPerfomers()
       .subscribe((data: Perfomer[]) => this.fperfomers = data);
     this.dataService.getVenues()
       .subscribe((data: Venue[]) => this.fvenues = data);
   }
 
-  ngOnInit() {
-    
-
-    
+  getPerfomer() {
+    for (let p of this.fperfomers)
+      if (p.name === this.concertInput.perfomerName)
+        this.concert.perfomerId = p.id;
   }
 
+  getVenue() {
+    for (let p of this.fvenues)
+      if (p.name === this.concertInput.venueName)
+        this.concert.venueId = p.id;
+  }
   
-  
-
+  ngOnInit() {
+  }
 }

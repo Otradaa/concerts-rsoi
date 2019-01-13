@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -25,6 +26,7 @@ import { MessagesComponent } from './messages/messages.component';
     HttpClientModule,
     AppRoutingModule,
     FormsModule,
+    NgbModule,
     RouterModule.forRoot([
       { path: '', redirectTo: '/concerts', pathMatch: 'full' },
       { path: 'concerts', component: ConcertsComponent },

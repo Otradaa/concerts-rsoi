@@ -15,4 +15,10 @@ namespace Gateway.Models
 
 
     }
+
+    public class ConcertsCount
+    {
+        public List<Concert> concerts { get; set; }
+        public int count { get; set; }
+    }
 }

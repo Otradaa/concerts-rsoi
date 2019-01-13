@@ -31,7 +31,9 @@ namespace Gateway.Controllers
         public async Task<IActionResult> Get([FromQuery] int page, [FromQuery] int pageSize)
         {
             _logger.LogInformation("-> requested GET /concerts?page={page}&pageSize={pageSize}", page, pageSize);
-            List<Concert> concerts = await _gateway.GetConcerts(page, pageSize);
+            ConcertsCount concertsCount = await _gateway.GetConcerts(page, pageSize);
+            List<Concert> concerts = concertsCount.concerts;
+            int count = concertsCount.count;
             if (concerts != null)
             {
                 List<ConcertRequest> fullconcerts = new List<ConcertRequest>();
@@ -51,7 +53,8 @@ namespace Gateway.Controllers
                 }
                 _logger.LogInformation("-> GET /concerts?page={0}&pageSize={1} returned {2} concert(s)", 
                     page, pageSize, fullconcerts.Count);
-                return Ok(fullconcerts);
+                ConcertsPage concertsPage = new ConcertsPage(count,page, pageSize,fullconcerts);
+                return Ok(concertsPage);
             }
             _logger.LogInformation("-> GET /concerts : no concerts found");
             return NoContent();
@@ -62,15 +65,13 @@ namespace Gateway.Controllers
         public async Task<IActionResult> Post([FromBody] Concert concert)
         {
             _logger.LogInformation("-> requested POST /concerts");
-
-            bool success;
             _logger.LogInformation("-> request to POST concertsService/concerts");
-            (success, concert) = await _gateway.PostConcert(concert);
-            if (success)
+            var response = await _gateway.PostConcert(concert);
+            if (response.IsSuccessStatusCode)
             {
                 Schedule schedule = new Schedule(concert.VenueId, concert.Date, concert.Id);
                 _logger.LogInformation("-> request to POST schedulesService/schedules");
-                success = await _gateway.PostSchedule(schedule);
+                bool success = await _gateway.PostSchedule(schedule);
                 if (success)
                 {
                     _logger.LogInformation("-> POST /concerts returned new concert with id {0}",
@@ -79,7 +80,7 @@ namespace Gateway.Controllers
                 }
             }
             _logger.LogInformation("-> POST /concerts returned BadRequest");
-            return BadRequest();
+            return BadRequest(response.ReasonPhrase);
         }
 
         // PUT: api/Concerts/5
@@ -88,12 +89,12 @@ namespace Gateway.Controllers
         {
             _logger.LogInformation("-> requested PUT /concerts/{id}", id);
             _logger.LogInformation("-> request to PUT concertsService/concerts");
-            bool success = await _gateway.PutConcert(id, concert);
-            if (success)
+            var response = await _gateway.PutConcert(id, concert);
+            if (response.IsSuccessStatusCode)
             {
                 Schedule schedule = new Schedule(concert.VenueId, concert.Date, id);
                 _logger.LogInformation("-> request to PUT schedulesService/schedules");
-                success = await _gateway.PutSchedule(schedule);
+                bool success = await _gateway.PutSchedule(schedule);
                 if (success)
                 {
                     _logger.LogInformation("-> PUT /concerts returned NoContent");
@@ -101,7 +102,7 @@ namespace Gateway.Controllers
                 }
             }
             _logger.LogInformation("-> PUT /concerts returned BadRequest");
-            return BadRequest();
+            return BadRequest(response.ReasonPhrase);
         }
     }
 }

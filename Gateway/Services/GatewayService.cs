@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Gateway.Services
@@ -20,7 +21,11 @@ namespace Gateway.Services
             venuesService = _venuesService;
         }
 
-        public async Task<List<Concert>> GetConcerts(int page, int size)
+        public async Task<int> GetConcertsCount()
+        {
+            return await concertService.GetCount();
+        }
+        public async Task<ConcertsCount> GetConcerts(int page, int size)
         {
             return await concertService.GetAll(page, size);
         }
@@ -44,7 +49,7 @@ namespace Gateway.Services
             return await venuesService.GetById(id);
         }
 
-        public async Task<(bool, Concert)> PostConcert(Concert concert)
+        public async Task<HttpResponseMessage> PostConcert(Concert concert)
         {
             return await concertService.PostOne(concert);
         }
@@ -54,7 +59,7 @@ namespace Gateway.Services
             return await venuesService.PostSchedule(schedule);
         }
 
-        public async Task<bool> PutConcert(int id, Concert concert)
+        public async Task<HttpResponseMessage> PutConcert(int id, Concert concert)
         {
             return await concertService.PutOne(id, concert);
         }

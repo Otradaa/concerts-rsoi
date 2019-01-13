@@ -29,35 +29,41 @@ namespace Gateway.Services
             _remoteServiceBaseUrl = $"{configuration["ConcertsUrl"]}";
         }
 
-        public async Task<List<Concert>> GetAll(int page, int size)
+        public async Task<int> GetCount()
+        {
+            string url = _remoteServiceBaseUrl + $"/concerts/count";
+            var request = new HttpRequestMessage(new HttpMethod("GET"), url);
+            var response = await _httpClient.SendAsync(request);
+            return await response.Content.ReadAsAsync<int>();
+        }
+
+        public async Task<ConcertsCount> GetAll(int page, int size)
         {
             string url = _remoteServiceBaseUrl + $"/concerts";
             if (page > 0 && size > 0)
                 url += $"?page={page}&size={size}";
             var request = new HttpRequestMessage(new HttpMethod("GET"), url);
             var response = await _httpClient.SendAsync(request);
-            return await response.Content.ReadAsAsync<List<Concert>>();
+            return await response.Content.ReadAsAsync<ConcertsCount>();
         }
 
-        public async Task<(bool, Concert)> PostOne(Concert concert)
+        public async Task<HttpResponseMessage> PostOne(Concert concert)
         {
             var request = new HttpRequestMessage(new HttpMethod("POST"),
                 _remoteServiceBaseUrl + "/concerts");
             request.Content = new StringContent(JsonConvert.SerializeObject(concert), 
                 Encoding.UTF8, "application/json");
-            var response = await _httpClient.SendAsync(request);
-            concert = await response.Content.ReadAsAsync<Concert>();
-            return (response.IsSuccessStatusCode, concert);
+
+            return await _httpClient.SendAsync(request);
         }
 
-        public async Task<bool> PutOne(int id, Concert concert)
+        public async Task<HttpResponseMessage> PutOne(int id, Concert concert)
         {
             var request = new HttpRequestMessage(new HttpMethod("PUT"),
                 _remoteServiceBaseUrl + "/concerts/" + id.ToString());
             request.Content = new StringContent(JsonConvert.SerializeObject(concert), 
                 Encoding.UTF8, "application/json");
-            var response = await _httpClient.SendAsync(request);
-            return response.IsSuccessStatusCode;
+            return await _httpClient.SendAsync(request);
         }
 
 

@@ -2,11 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Concert } from './concert';
 import { ConcertGet } from './concertGet';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError  } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { MessageService } from './message.service';
 import { Perfomer } from './perfomer';
 import { Venue } from './venue';
+import { ConcertsPage } from './concertsPage';
+
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -21,28 +23,29 @@ export class ConcertsService {
   private concertUrl = "https://localhost:44366/api/concerts";
   private perfomerUrl = "https://localhost:44366/api/perfomers";
   private venueUrl = "https://localhost:44366/api/venues";
+  error='';
 
   constructor(private http: HttpClient, private messageService: MessageService) {
   }
 
-  getConcerts() {
-    return this.http.get(this.concertUrl).pipe(
-      tap((concertAns: ConcertGet[]) => console.log(`got concerts`)),
-      catchError(this.handleError<ConcertGet[]>('getConcerts'))
+  getConcerts(page:any, size:number) {
+    return this.http.get(this.concertUrl + `?page=` + page +`&pageSize=`+size).pipe(
+      tap((concertAns: ConcertsPage) => console.log(`got concerts`)),
+      catchError(this.handleError)
     );
   }
 
   getPerfomers() {
     return this.http.get(this.perfomerUrl).pipe(
       tap((concertAns: Perfomer[]) => console.log(`got perfomers`)),
-      catchError(this.handleError<Perfomer[]>('getPerfomers'))
+      catchError(this.handleError)
     );
   }
 
   getVenues() {
     return this.http.get(this.venueUrl).pipe(
       tap((concertAns: Venue[]) => console.log(`got venues`)),
-      catchError(this.handleError<Venue[]>('getVenues'))
+      catchError(this.handleError)
     );
   }
 
@@ -54,35 +57,52 @@ export class ConcertsService {
            }`;
     return this.http.post<Concert>(this.concertUrl, bodyv, httpOptions).pipe(
       tap((concertAns: Concert) => console.log(`added concert w/ id=${concertAns.id}`)),
-      catchError(this.handleError<Concert>('createConcert'))
+      catchError(this.handleError)
     );
   }
-  private handleError<T>(operation = 'operation', result?: T) {
+
+  handleError(error) {
+    let errorMessage = '';
+    if (error.error instanceof ErrorEvent) {
+      // client-side
+      errorMessage = `Error: ${error.error.message}`;
+    } else {
+      // server-side 
+      if (error.status === undefined)
+        return;
+      errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+      
+    }
+    window.alert(errorMessage);
+    return throwError(errorMessage);
+  }
+
+
+  /*private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
 
       // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
+       // log to console instead
+
+      this.error = error.message;
 
       // TODO: better job of transforming error for user consumption
       this.log(`${operation} failed: ${error.message}`);
-
+      console.error(error);
       // Let the app keep running by returning an empty result.
-      return of(result as T);
+      return throwError(error);
     };
-  }
+  }*/
 
-  /** Log a HeroService message with the MessageService */
   private log(message: string) {
     this.messageService.add(`ConcertService: ${message}`);
   }
+
   updateConcert(concert: Concert) {
 
     return this.http.put(this.concertUrl + '/' + concert.id, concert).pipe(
-      tap((concertAns: Concert) => console.log(`edited concert w/ id=${concertAns.id}`)),
-      catchError(this.handleError<Concert>('updatedConcert'))
+      tap(result => console.log(`edited concert`)),
+      catchError(this.handleError)
     );
   }
-  /*deleteConcert(id: number) {
-    return this.http.delete(this.url + '/' + id);
-  }*/
 }

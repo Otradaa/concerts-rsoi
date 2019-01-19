@@ -50,8 +50,11 @@ namespace Gateway.Services
         }
 
         public async Task<HttpResponseMessage> PostConcert(Concert concert)
+        public async Task<ClientToken> GetToken()
         {
             return await concertService.PostOne(concert);
+            return await concertService.GetToken();
+        }
         }
 
         public async Task<bool> PostSchedule(Schedule schedule)

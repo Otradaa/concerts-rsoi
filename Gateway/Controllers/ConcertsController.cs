@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Gateway.Models;
 using Gateway.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -19,11 +20,13 @@ namespace Gateway.Controllers
     {
         private readonly IGatewayService _gateway;
         private readonly ILogger _logger;
+        private ClientToken _token;
 
         public ConcertsController(IGatewayService gateway, ILogger<ConcertsController> logger)
         {
             _gateway = gateway;
             _logger = logger;
+            _token = new ClientToken();
         }
 
         // GET: api/Concerts
@@ -66,7 +69,13 @@ namespace Gateway.Controllers
         {
             _logger.LogInformation("-> requested POST /concerts");
             _logger.LogInformation("-> request to POST concertsService/concerts");
-            var response = await _gateway.PostConcert(concert);
+            var response = await _gateway.PostConcert(concert, _token);
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                _token = await _gateway.GetToken();
+                response = await _gateway.PostConcert(concert, _token);
+            }
+
             if (response.IsSuccessStatusCode)
             {
                 Schedule schedule = new Schedule(concert.VenueId, concert.Date, concert.Id);

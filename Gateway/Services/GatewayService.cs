@@ -49,12 +49,13 @@ namespace Gateway.Services
             return await venuesService.GetById(id);
         }
 
-        public async Task<HttpResponseMessage> PostConcert(Concert concert)
         public async Task<ClientToken> GetToken()
         {
-            return await concertService.PostOne(concert);
             return await concertService.GetToken();
         }
+        public async Task<HttpResponseMessage> PostConcert(Concert concert, ClientToken token)
+        {
+            return await concertService.PostOne(concert, token);
         }
 
         public async Task<bool> PostSchedule(Schedule schedule)

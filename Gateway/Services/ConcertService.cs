@@ -48,7 +48,6 @@ namespace Gateway.Services
             return await response.Content.ReadAsAsync<ConcertsCount>();
         }
 
-        public async Task<HttpResponseMessage> PostOne(Concert concert)
         public async Task<ClientToken> GetToken()
         {
             var request = new HttpRequestMessage(new HttpMethod("POST"),
@@ -60,9 +59,12 @@ namespace Gateway.Services
             var responce = await _httpClient.SendAsync(request);
             return await responce.Content.ReadAsAsync<ClientToken>();
         }
+        public async Task<HttpResponseMessage> PostOne(Concert concert, ClientToken token)
         {
             var request = new HttpRequestMessage(new HttpMethod("POST"),
                 _remoteServiceBaseUrl + "/concerts");
+            if (token.Token != null)
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.Token);
             request.Content = new StringContent(JsonConvert.SerializeObject(concert), 
                 Encoding.UTF8, "application/json");
 

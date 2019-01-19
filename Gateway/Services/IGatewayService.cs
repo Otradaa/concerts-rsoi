@@ -15,7 +15,7 @@ namespace Gateway.Services
         Task<List<Venue>> GetVenues();
         Task<Perfomer> GetPerfomerById(int id);
         Task<Venue> GetVenueById(int id);
-        Task<HttpResponseMessage> PostConcert(Concert concert);
+        Task<HttpResponseMessage> PostConcert(Concert concert, ClientToken token);
         Task<ClientToken> GetToken();
         Task<bool> PostSchedule(Schedule schedule);
         Task<HttpResponseMessage> PutConcert(int id, Concert concert);

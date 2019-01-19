@@ -11,8 +11,8 @@ namespace Gateway.Services
     {
         Task<ConcertsCount> GetAll(int page, int size);
         Task<int> GetCount();
-        Task<HttpResponseMessage> PostOne(Concert concert);
         Task<ClientToken> GetToken();
+        Task<HttpResponseMessage> PostOne(Concert concert, ClientToken token);
         Task<HttpResponseMessage> PutOne(int id, Concert concert);
     }
 }

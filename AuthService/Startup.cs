@@ -41,6 +41,7 @@ namespace AuthService
             }
 
             app.UseHttpsRedirection();
+            app.UseAuthentication();
             app.UseMvc();
         }
     }

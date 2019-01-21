@@ -26,8 +26,27 @@ namespace Gateway.Services
         public async Task<UsersToken> Login(User user)
         {
             var userContent = new StringContent(JsonConvert.SerializeObject(user), System.Text.Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync(_remoteServiceBaseUrl, userContent);
+            var response = await _httpClient.PostAsync(_remoteServiceBaseUrl+"/users", userContent);
             return await response.Content.ReadAsAsync<UsersToken>();
+            /*try
+            {
+                response.EnsureSuccessStatusCode();
+                string responseBody = await response.Content.ReadAsStringAsync();
+                var usersToken = JsonConvert.DeserializeObject<UsersToken>(responseBody);
+
+                return usersToken;
+            }
+            catch (HttpRequestException e)
+            {
+                if (response.StatusCode != System.Net.HttpStatusCode.Unauthorized)
+                    throw e;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+
+            return null;*/
         }
         public async Task<UsersToken> RefreshTokens(UsersToken token)
         {
@@ -37,6 +56,25 @@ namespace Gateway.Services
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.RefreshToken);
             var response = await _httpClient.SendAsync(request);
             return await response.Content.ReadAsAsync<UsersToken>();
+            /*try
+            {
+                response.EnsureSuccessStatusCode();
+                string responseBody = await response.Content.ReadAsStringAsync();
+                var usersToken = JsonConvert.DeserializeObject<UsersToken>(responseBody);
+
+                return usersToken;
+            }
+            catch (HttpRequestException e)
+            {
+                if (response.StatusCode != System.Net.HttpStatusCode.Unauthorized)
+                    throw e;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+
+            return null;*/
 
         }
 
@@ -49,6 +87,23 @@ namespace Gateway.Services
             var response = await _httpClient.SendAsync(request);
             return await response.Content.ReadAsAsync<bool>();
 
+            /*
+            try
+            {
+                response.EnsureSuccessStatusCode();
+                return true;
+            }
+            catch (HttpRequestException e)
+            {
+                if (response.StatusCode != System.Net.HttpStatusCode.Unauthorized)
+                    throw e;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+
+            return false;*/
 
         }
     }

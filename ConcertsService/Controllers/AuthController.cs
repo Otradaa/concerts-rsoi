@@ -16,7 +16,7 @@ namespace ConcertsService.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IToken tokenGenerator;
-*/
+
         public AuthController(IToken tokenGenerator)
         {
             this.tokenGenerator = tokenGenerator;

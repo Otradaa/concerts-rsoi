@@ -26,6 +26,7 @@ namespace Gateway.Controllers
         [Route("login")]
         public async Task<ActionResult<UsersToken>> Login([FromBody] User user)
         {
+
             try
             {
                 var logged = await _authService.Login(user);
@@ -44,8 +45,6 @@ namespace Gateway.Controllers
         [Route("refreshtokens")]
         public async Task<ActionResult<UsersToken>> RefreshTokens(UsersToken usersToken)
         {
-            //  if (!ModelState.IsValid)
-            //     return BadRequest(ModelState.ToString());
 
             try
             {

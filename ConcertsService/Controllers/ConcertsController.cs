@@ -8,9 +8,13 @@ using Microsoft.EntityFrameworkCore;
 using ConcertsService.Models;
 using ConcertsService.Data;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace ConcertsService.Controllers
 {
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     [ApiController]
     public class ConcertsController : ControllerBase
@@ -25,14 +29,14 @@ namespace ConcertsService.Controllers
         }
 
         // GET: api/Concerts
-        [HttpGet]
+        [HttpGet, AllowAnonymous]
         public ConcertsCount GetConcert([FromQuery] int page, [FromQuery] int size)
         {
             _logger.LogInformation("-> requested GET /concerts");
             return _repo.GetAllConcerts(page, size);
         }
 
-        [HttpGet]
+        [HttpGet, AllowAnonymous]
         [Route("api/concerts/count")]
         public async Task<int> GetCount()
         {
@@ -41,7 +45,7 @@ namespace ConcertsService.Controllers
         }
 
         // PUT: api/Concerts/5
-        [HttpPut("{id}")]
+        [HttpPut("{id}"), AllowAnonymous]
         public async Task<IActionResult> PutConcert([FromRoute] int id, [FromBody] Concert concert)
         {
             _logger.LogInformation("-> requested PUT /concerts");
@@ -92,7 +96,7 @@ namespace ConcertsService.Controllers
                 return BadRequest(ModelState);
             }
 
-            _repo.AddConcert(concert);
+            concert = _repo.AddConcert(concert);
             await _repo.SaveChanges();
 
             _logger.LogInformation("-> POST /concerts returned Created with id = {id}", concert.Id);

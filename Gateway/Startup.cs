@@ -26,6 +26,8 @@ namespace Gateway
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddHttpClient<IAuthService, Services.AuthService>();
+
             services.AddHttpClient<IConcertService, ConcertService>();
             services.AddHttpClient<IVenuesService, VenuesService>();
             services.AddHttpClient<IPerfomersService, PerfomersService>();

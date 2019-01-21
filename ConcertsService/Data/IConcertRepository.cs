@@ -15,7 +15,7 @@ namespace ConcertsService.Data
         Task<int> GetCount();
         Task SaveChanges();
         void ChangeState(Concert concert, EntityState state);
-        EntityState AddConcert(Concert concert);
+        Concert AddConcert(Concert concert);
         bool ConcertExists(int id);
 
     }

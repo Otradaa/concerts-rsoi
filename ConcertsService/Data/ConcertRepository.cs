@@ -51,9 +51,9 @@ namespace ConcertsService.Data
             _context.Entry(concert).State = state;
         }
 
-        public EntityState AddConcert(Concert concert)
+        public Concert AddConcert(Concert concert)
         {
-            return _context.Concert.Add(concert).State;
+            return _context.Concert.Add(concert).Entity;
         }
 
         public bool ConcertExists(int id)

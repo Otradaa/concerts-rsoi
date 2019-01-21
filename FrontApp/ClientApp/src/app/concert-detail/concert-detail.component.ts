@@ -1,5 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { ConcertsService } from '../concerts.service';
+
+import { ConcertsService } from '../services/concerts.service';
+
 import { NgForm } from '@angular/forms';
 
 import { Concert } from '../concert';

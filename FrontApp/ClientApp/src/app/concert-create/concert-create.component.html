@@ -50,12 +50,11 @@
       </div>
 
       <button type="submit" class="btn btn-success" [disabled]="!createForm.form.valid">Submit</button>
-      <button type="button" class="btn btn-default" routerLink="/concerts"
+      <button type="button" class="btn btn-default" style="margin-left:5px" routerLink="/concerts"
               (click)="createForm.reset(); messageService.clear()">
         Назад
       </button>
       <br>
-      <!--<button type="button" class="btn btn-default" (click)="newHero(); heroForm.reset()">New Hero</button>-->
     </form>
   </div>
   <div [hidden]="!submitted">

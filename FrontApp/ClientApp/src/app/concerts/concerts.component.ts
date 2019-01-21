@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ConcertsService } from '../concerts.service';
+import { ConcertsService } from '../services/concerts.service';
+
 import { Concert } from '../concert';
 import { Perfomer } from '../perfomer';
 import { Venue } from '../venue';

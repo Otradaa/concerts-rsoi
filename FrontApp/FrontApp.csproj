@@ -19,8 +19,19 @@
 
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
+    <Compile Remove="ClientApp1\**" />
+    <Compile Remove="ClientApp\src\app\Новая папка\**" />
     <Content Remove="$(SpaRoot)**" />
+    <Content Remove="ClientApp1\**" />
+    <Content Remove="ClientApp\src\app\Новая папка\**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="ClientApp1\**" />
+    <EmbeddedResource Remove="ClientApp\src\app\Новая папка\**" />
+    <None Remove="ClientApp1\**" />
+    <None Remove="ClientApp\src\app\Новая папка\**" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

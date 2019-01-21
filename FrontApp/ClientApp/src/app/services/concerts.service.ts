@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Concert } from './concert';
-import { ConcertGet } from './concertGet';
+import { Concert } from '../concert';
+import { ConcertGet } from '../concertGet';
 import { Observable, of, throwError  } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
-import { MessageService } from './message.service';
-import { Perfomer } from './perfomer';
-import { Venue } from './venue';
-import { ConcertsPage } from './concertsPage';
-
+import { MessageService } from '../message.service';
+import { Perfomer } from '../perfomer';
+import { Venue } from '../venue';
+import { ConcertsPage } from '../concertsPage';
+//import { SecurityService } from './auth.service';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -25,10 +25,11 @@ export class ConcertsService {
   private venueUrl = "https://localhost:44366/api/venues";
   error='';
 
-  constructor(private http: HttpClient, private messageService: MessageService) {
+  constructor(private http: HttpClient, private messageService: MessageService) {//,
+   // private securityService: SecurityService) {
   }
 
-  getConcerts(page:any, size:number) {
+  getConcerts(page: any, size: number) {
     return this.http.get(this.concertUrl + `?page=` + page +`&pageSize=`+size).pipe(
       tap((concertAns: ConcertsPage) => console.log(`got concerts`)),
       catchError(this.handleError)
@@ -50,12 +51,14 @@ export class ConcertsService {
   }
 
   createConcert(concert: Concert): Observable<Concert> {
+    let options = {};
+  //  this.setHeaders(options);
     var bodyv = `{
            "perfomerId" : ` + concert.perfomerId + `,
            "venueId" : ` + concert.venueId + `,
            "date" : "` + concert.date + `"
            }`;
-    return this.http.post<Concert>(this.concertUrl, bodyv, httpOptions).pipe(
+    return this.http.post<Concert>(this.concertUrl, bodyv, options).pipe(
       tap((concertAns: Concert) => console.log(`added concert w/ id=${concertAns.id}`)),
       catchError(this.handleError)
     );
@@ -99,10 +102,20 @@ export class ConcertsService {
   }
 
   updateConcert(concert: Concert) {
-
-    return this.http.put(this.concertUrl + '/' + concert.id, concert).pipe(
+    let options = {};
+    //this.setHeaders(options);
+    return this.http.put(this.concertUrl + '/' + concert.id, concert, options).pipe(
       tap(result => console.log(`edited concert`)),
       catchError(this.handleError)
     );
   }
+
+  /*private setHeaders(options: any) {
+    if (this.securityService) {
+      options["headers"] = new HttpHeaders()
+        .append('Content-Type', 'application/json' )
+        .append('authorization', 'Bearer ' + this.securityService.GetToken());
+    }
+  }*/
 }
+

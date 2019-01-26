@@ -20,5 +20,6 @@ namespace Gateway.Services
         Task<bool> PostSchedule(Schedule schedule);
         Task<HttpResponseMessage> PutConcert(int id, Concert concert);
         Task<bool> PutSchedule(Schedule schedule);
+        Task<bool> ValidateToken(string token);
     }
 }

@@ -33,6 +33,10 @@ namespace Gateway.Controllers
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] int page, [FromQuery] int pageSize)
         {
+            if (!Request.Headers.Keys.Any(p => p == "Authorization") ||
+                !await _gateway.ValidateToken(Request.Headers["Authorization"].ToString()))
+                return Unauthorized();
+
             _logger.LogInformation("-> requested GET /concerts?page={page}&pageSize={pageSize}", page, pageSize);
             ConcertsCount concertsCount = await _gateway.GetConcerts(page, pageSize);
             List<Concert> concerts = concertsCount.concerts;

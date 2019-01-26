@@ -6,10 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using AuthService.Models;
-using static AuthService.Models.Account;
 using AuthService.Data;
 using AuthService.Services;
-using User = AuthService.Data.User;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 
@@ -90,7 +88,7 @@ namespace AuthService.Controllers
         //app: client_id, secret, authcode
         [HttpPost]//
         [Route("authcode")] // /oauth/authcode
-        public async Task<ActionResult<RedUrl>> GetAuthCode([FromBody] Data.User _user,[FromQuery]string client_id = "clientid", [FromQuery]string redirect_uri = "http://localhost:8701/return", [FromQuery]string response_type = "code")
+        public async Task<ActionResult<RedUrl>> GetAuthCode([FromBody] User _user,[FromQuery]string client_id = "clientid", [FromQuery]string redirect_uri = "http://localhost:8701/return", [FromQuery]string response_type = "code")
         {
             string username = _user.Username;
             string password = _user.Password;

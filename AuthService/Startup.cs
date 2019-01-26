@@ -20,7 +20,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using static AuthService.Models.Account;
 
 namespace AuthService
 {
@@ -37,10 +36,6 @@ namespace AuthService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
-            services.AddDbContext<UserContext>(options =>
-
-            options.UseSqlServer(Configuration.GetConnectionString("UsersDatabase")));
 
             services.AddDbContext<UsersDb>(options =>
 
@@ -59,37 +54,6 @@ namespace AuthService
                     .AllowAnyHeader()
                     .AllowCredentials());
             });
-
-            /*services.AddIdentity<UserAccount, IdentityRole>(cfg =>
-            {
-                cfg.Password.RequireDigit = false;
-                cfg.Password.RequireUppercase = false;
-                cfg.Password.RequireLowercase = false;
-                cfg.Password.RequireNonAlphanumeric = false;
-            })
-                .AddEntityFrameworkStores<UserContext>();
-
-            var accountOptions = new AuthOptions()
-
-            {
-                ISSUER = "authServer",
-                AUDIENCE = "GateWay"
-            };
-            var tokenGenerator = new Token(accountOptions);
-
-            services.AddSingleton<IToken>(tokenGenerator);
-
-            services.AddSingleton<AuthOptions>(accountOptions);
-
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(cfg =>
-                {
-                    cfg.RequireHttpsMetadata = false;
-                    cfg.SaveToken = true;
-                    cfg.TokenValidationParameters = accountOptions.GetParameters();
-
-                });
-                */
 
             services.AddTransient<ITokenService, TokenService>();
             services.AddTransient<IPasswordHasher, PasswordHasher>();
@@ -121,8 +85,6 @@ namespace AuthService
                     }
                 };
             });
-            //services.AddAuthentication(OAuthValidationDefaults.AuthenticationScheme)
-    //.AddOAuthValidation();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

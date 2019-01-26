@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
+using AuthService.Data;
 using AuthService.Models;
 using Gateway.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+
 
 namespace Gateway.Controllers
 {
@@ -24,40 +27,60 @@ namespace Gateway.Controllers
 
         [HttpPost]
         [Route("login")]
-        public async Task<ActionResult<UsersToken>> Login([FromBody] User user)
+        public async Task<ActionResult<UserTokens>> Login([FromBody] User user)
         {
-
-            try
-            {
-                var logged = await _authService.Login(user);
-                if (logged == null)
-                    return BadRequest();
-                return Ok(logged);
-            }
-            catch
-            {
+            var logged = await _authService.Login(user);
+            if (logged == null)
                 return BadRequest();
+            return Ok(logged);
+        }
+
+        [HttpPost]
+        [Route("authcode")]
+        public async Task<ActionResult> GetAuthCode([FromBody] User user)
+        {
+            var result = await _authService.GetAuthCode(user);
+            if (result.StatusCode == HttpStatusCode.OK)
+            {
+                return Ok(result.Content.ReadAsAsync<RedUrl>().Result);
             }
+            return BadRequest(result.ReasonPhrase);
 
         }
 
         [HttpPost]
-        [Route("refreshtokens")]
-        public async Task<ActionResult<UsersToken>> RefreshTokens(UsersToken usersToken)
+        [Route("token")]
+        public async Task<ActionResult<UserTokens>> GetTokens([FromBody] AppUser user)
         {
-
-            try
+            var result = await _authService.GetTokens(user);
+            if (result != null)
             {
-                var token = _authService.RefreshTokens(usersToken);
-                if (token != null)
-                    return Ok(token);
+                return Ok(result);
             }
-            catch
-            {
-                return BadRequest();
-            }
-
             return BadRequest();
+        }
+
+
+        [HttpGet]
+        [Route("authorize")]
+        public async Task<ActionResult> LoginApp()
+        {
+            var result = await _authService.LoginApp();
+            if (result != null)
+            {
+                return Redirect(result);
+            }
+            return BadRequest();
+        }
+
+        [HttpPost]
+        [Route("refresh")]
+        public async Task<ActionResult<UserTokens>> RefreshTokens(UserTokens usersToken)
+        {
+            var token = await _authService.RefreshTokens(usersToken);
+            if (token != null)
+                return Ok(token);
+            return Unauthorized();
         }
 
 
@@ -65,24 +88,11 @@ namespace Gateway.Controllers
         [Route("validate")]
         public async Task<ActionResult<bool>> Validate()
         {
-
-            try
-            {
-                string header = Request.Headers["Authorization"];
-
-                bool flag = await _authService.ValidateToken(header);
-                if (flag)
-                    return Ok(flag);
-            }
-            catch
-            {
-                return BadRequest();
-            }
-
+            string header = Request.Headers["Authorization"];
+            var isValidated = await _authService.ValidateToken(header);
+            if (isValidated)
+                return Ok(isValidated);
             return Unauthorized();
         }
-
-
-
     }
 }

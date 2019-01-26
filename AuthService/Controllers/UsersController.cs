@@ -11,8 +11,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using static AuthService.Models.Account;
-using User = AuthService.Data.User;
 
 namespace AuthService.Controllers
 {
@@ -103,7 +101,7 @@ namespace AuthService.Controllers
 
         [HttpPost]
         [Route("login")]
-        public async Task<ActionResult<UserTokens>> Login([FromBody] Data.User _user)
+        public async Task<ActionResult<UserTokens>> Login([FromBody] User _user)
         {
             string username = _user.Username;
             string password = _user.Password;

@@ -12,13 +12,15 @@ namespace Gateway.Services
         private readonly IConcertService concertService;
         private readonly IPerfomersService perfomersService;
         private readonly IVenuesService venuesService;
+        private readonly IAuthService authService;
 
-        public GatewayService(IConcertService _concertService, 
+        public GatewayService(IConcertService _concertService, IAuthService _authService,
             IPerfomersService _perfomersService, IVenuesService _venuesService)
         {
             concertService = _concertService;
             perfomersService = _perfomersService;
             venuesService = _venuesService;
+            authService = _authService;
         }
 
         public async Task<int> GetConcertsCount()
@@ -71,6 +73,11 @@ namespace Gateway.Services
         public async Task<bool> PutSchedule(Schedule schedule)
         {
             return await venuesService.PutSchedule(schedule);
+        }
+
+        public async Task<bool> ValidateToken(string token)
+        {
+            return await authService.ValidateToken(token);
         }
 
     }

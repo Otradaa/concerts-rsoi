@@ -23,7 +23,7 @@ namespace AuthService.Controllers
         private readonly AppsDb _appsDb;
         private readonly IPasswordHasher _passwordHasher;
         private readonly ITokenService _tokenService;
-     //   private AppUser appUser;
+
         public OAuthController(UsersDb usersDb, AppsDb appsDb,
             IPasswordHasher passwordHasher, ITokenService tokenService)
         {
@@ -55,44 +55,12 @@ namespace AuthService.Controllers
                 });
                 _appsDb.SaveChanges();
             }
-            //if (appUser == null)
-            //    appUser = new AppUser() { client_id = "clientid", appSecret = "secret", code = "" };
         }
-
-/*
-        [HttpPost]
-        [Route("refresh")]
-        public async Task<IActionResult> Refresh([FromBody] UserTokens tokens)
-        {
-            var principal = _tokenService.GetPrincipalFromExpiredToken(tokens.token);
-            if (principal == null)
-                return Unauthorized();
-            var client_id = principal.Identity.Name; //this is mapped to the Name claim by default
-
-            //var app = _usersDb.Users.SingleOrDefault(u => u.Username == username);
-            if (client_id != appUser.client_id || appUser.refreshToken != tokens.refreshToken)
-                return BadRequest();
-
-            var newJwtToken = _tokenService.GenerateAccessToken(principal.Claims);
-            var newRefreshToken = _tokenService.GenerateRefreshToken(principal.Claims);
-
-            appUser.refreshToken = newRefreshToken;
-
-            return new ObjectResult(new
-            {
-                token = newJwtToken,
-                refreshToken = newRefreshToken
-            });
-        }
-*/
-
-
 
         [HttpPost]//
         [Route("token")] // /oauth/token
         public async Task<ActionResult<UserTokens>> GetTokens([FromBody] AppUser _user)
         {
-            //if (user == null || !_passwordHasher.VerifyIdentityV3Hash(password, user.Password)) return BadRequest();
             var user = _appsDb.Users.SingleOrDefault(u => u.client_id == _user.client_id);
             //знакомое приложение
             if (user == null)
@@ -100,12 +68,10 @@ namespace AuthService.Controllers
             if (!_passwordHasher.VerifyIdentityV3Hash(_user.appSecret, user.appSecret)
                 || user.code != _user.code)
                 return BadRequest();
-
             
             var usersClaims = new[]
             {
                 new Claim(ClaimTypes.Name, _user.client_id)
-              //  new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
             };
 
             var jwtToken = _tokenService.GenerateAccessToken(usersClaims);
@@ -142,7 +108,6 @@ namespace AuthService.Controllers
             await _appsDb.SaveChangesAsync();
 
             string url = redirect_uri + "?code=" + app.code;
-            //this.Response.ContentType = "text/plain";
             return new RedUrl()
             {
                 red = url
@@ -150,28 +115,15 @@ namespace AuthService.Controllers
 
         }
 
-
-            //редирект на форму с клиент айди
-
-            //запрос на код
-            //редирект на форму для входа клиента с клиент айди
-            //на той форме кнопка подтвердить права которая 
         [HttpGet]//
         [Route("authorize")] // /oauth/authorize
         public async Task<ActionResult<string>> LoginUser([FromQuery]string client_id = "clientid", [FromQuery]string redirect_uri = "http://localhost:8701/return", [FromQuery]string response_type = "code")
         {
             var user = _appsDb.Users.SingleOrDefault(u => u.client_id == client_id);
-            //знакомое приложение
             if (user == null)
                 return BadRequest("Unknown App");
             string url = "http://localhost:8701/oauth2/login" +"?redirect_uri=" + redirect_uri + "&client_id=" + client_id;
             return Redirect(url);
-
-            //редирект на форму с клиент айди
-            // и обратно с формы запрос с токеном от юзера и клиент айди
-            //если токен валиден то даем код приложению
-
-            
         }
 
         [HttpGet]//
@@ -180,7 +132,7 @@ namespace AuthService.Controllers
         public async Task<IActionResult> Validate()
         {
             string token = Request.Headers["Authorization"].ToString().Remove(0, 7);
-            var principal = _tokenService.GetPrincipalFromExpiredToken(token);//???????????????????
+            var principal = _tokenService.GetPrincipalFromExpiredToken(token);
             if (principal == null) 
                 return BadRequest();
             else
@@ -194,13 +146,14 @@ namespace AuthService.Controllers
             var principal = _tokenService.GetPrincipalFromExpiredToken(tokens.token);
             if (principal == null)
                 return Unauthorized();
-            var username = principal.Identity.Name; //this is mapped to the Name claim by default
+            var username = principal.Identity.Name;
             string newJwtToken;
             string newRefreshToken;
-            if (username != "clientid")////////////////////////////////////////////////////
+
+
+            var user = _usersDb.Users.SingleOrDefault(u => u.Username == username);
+            if (user != null && user.RefreshToken == tokens.refreshToken)
             {
-                var user = _usersDb.Users.SingleOrDefault(u => u.Username == username);
-                if (user == null || user.RefreshToken != tokens.refreshToken) return Unauthorized();
                 newJwtToken = _tokenService.GenerateAccessToken(principal.Claims);
                 newRefreshToken = _tokenService.GenerateRefreshToken(principal.Claims);
 
@@ -209,15 +162,18 @@ namespace AuthService.Controllers
             }
             else
             {
-                var user = _appsDb.Users.SingleOrDefault(u => u.client_id == username);
-                if (user == null || user.refreshToken != tokens.refreshToken) 
+                var app = _appsDb.Users.SingleOrDefault(u => u.client_id == username);
+                if (app != null && app.refreshToken == tokens.refreshToken)
+                {
+                    newJwtToken = _tokenService.GenerateAccessToken(principal.Claims);
+                    newRefreshToken = _tokenService.GenerateRefreshToken(principal.Claims);
+
+                    app.refreshToken = newRefreshToken;
+                    await _appsDb.SaveChangesAsync();
+                }
+                else 
                     return Unauthorized();
-                newJwtToken = _tokenService.GenerateAccessToken(principal.Claims);
-                newRefreshToken = _tokenService.GenerateRefreshToken(principal.Claims);
-
-                user.refreshToken = newRefreshToken;
-                await _appsDb.SaveChangesAsync();
-
+                
             }
 
             return new UserTokens
@@ -226,7 +182,6 @@ namespace AuthService.Controllers
                 refreshToken = newRefreshToken
             };
         }
-
   
         private string GetAuthCode()
         {

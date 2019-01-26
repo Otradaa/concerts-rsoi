@@ -9,7 +9,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { httpInterceptor } from './token.interceptor';
 import { ErrorInterceptor } from './error.interceptor';
-
+import { TokenComponent } from './oauth2/token.component'
 import { AuthComponent } from './auth/auth.component';
 import { TokenCheck } from './auth/token.check';
 
@@ -21,6 +21,7 @@ import { ConcertsComponent } from './concerts/concerts.component';
 import { ConcertDetailComponent } from './concert-detail/concert-detail.component';
 import { ConcertCreateComponent } from './concert-create/concert-create.component';
 import { MessagesComponent } from './messages/messages.component';
+import { Oauth2Component } from './oauth2/oauth2.component';
 
 //import { AuthComponent } from './auth/auth.component';
 
@@ -31,8 +32,9 @@ import { MessagesComponent } from './messages/messages.component';
     ConcertDetailComponent,
     ConcertCreateComponent,
     MessagesComponent,
-    AuthComponent
-    
+    AuthComponent,
+    Oauth2Component,
+    TokenComponent
   ],
   imports: [
     BrowserModule,
@@ -42,10 +44,12 @@ import { MessagesComponent } from './messages/messages.component';
     NgbModule,
     ReactiveFormsModule,
     RouterModule.forRoot([
-      { path: '', redirectTo: '/concerts', pathMatch: 'full' },
+      { path: '', redirectTo: '/login', pathMatch: 'full' },
       { path: 'concerts', component: ConcertsComponent },
       { path: 'concerts/new', component: ConcertCreateComponent },
       { path: 'concerts/:id', component: ConcertDetailComponent },
+      { path: 'oauth2/login', component: Oauth2Component },
+      { path: 'return', component: TokenComponent },
       { path: 'login', component: AuthComponent }
     ])
   ],

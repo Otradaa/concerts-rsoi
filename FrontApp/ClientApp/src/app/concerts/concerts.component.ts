@@ -45,6 +45,7 @@ export class ConcertsComponent implements OnInit {
     this.itemsPerPage = 10;
     this.totalItems = 10;
     this.loadPage(this.page);
+    localStorage.setItem('returnUrl', '/concerts');
   }
 
   loadPage(page: number) {

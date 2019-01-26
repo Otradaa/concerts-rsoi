@@ -20,6 +20,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     console.log('app on init');
+    localStorage.clear();
    // this.subscription = this.securityService.authenticationChallenge$.subscribe(res => this.Authenticated = res);
 
     //Get configuration from server environment variables:

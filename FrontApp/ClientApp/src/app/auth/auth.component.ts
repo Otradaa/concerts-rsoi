@@ -3,7 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { User } from '../user';
-import { UsersToken } from '../userstoken';
+import { UserTokens } from '../userstoken';
 import { HttpClient } from '@angular/common/http';
 
 //import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -23,11 +23,11 @@ export class AuthComponent {
   returnUrl: string;
   error = '';
   user: User;
-  usersToken: UsersToken = new UsersToken('','','');
+  usersToken: UserTokens = new UserTokens('','');
   http: HttpClient;
   loginForm: FormGroup;
   loading = false;
-
+  url = 'https://localhost:44366/api/auth/authorize';//auth service
 
   constructor(
     http: HttpClient, 
@@ -39,8 +39,9 @@ export class AuthComponent {
 
   ngOnInit() {
     this.user = new User();
-    this.usersToken = new UsersToken();
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+    this.usersToken = new UserTokens();
+    this.returnUrl = '/concerts';
+    localStorage.setItem('returnUrl', this.returnUrl);
     this.loginForm = this.formBuilder.group({
       username: ['', Validators.required],
       password: ['', Validators.required]
@@ -52,6 +53,13 @@ export class AuthComponent {
   authAPI() {
     //redirest to /oauth2
     //usual form there
+    
+    this.http
+      .get<any>(this.url, { observe: 'response' })
+      .subscribe(resp => {
+        console.log(resp.headers.get('location'));
+      });
+    //window.location.href =;
   }
 
 
@@ -68,7 +76,7 @@ export class AuthComponent {
     this.loading = true;
     this.user.username = this.f.username.value;
     this.user.password = this.f.password.value;
-    this.http.post<User>(url, this.user)
+    this.http.post<UserTokens>(url, this.user)
       .pipe(first())
       .subscribe(
       result => {

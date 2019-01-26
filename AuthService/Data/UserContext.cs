@@ -22,4 +22,26 @@ namespace AuthService.Data
         }
 
     }
+
+    public class UsersDb : DbContext
+    {
+        public DbSet<User> Users { get; set; }
+
+        public UsersDb(DbContextOptions<UsersDb> options) : base(options) {
+            Database.EnsureCreated();
+        }
+    }
+
+    public class AppsDb : DbContext
+    {
+        public DbSet<AppUser> Users { get; set; }
+
+        public AppsDb(DbContextOptions<AppsDb> options) : base(options)
+        {
+            Database.EnsureCreated();
+        }
+    }
+
+    
+
 }

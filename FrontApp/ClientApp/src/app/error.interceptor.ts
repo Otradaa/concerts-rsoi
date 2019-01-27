@@ -1,58 +1,77 @@
 import { Injectable } from '@angular/core';
-import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor, HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor, HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, BehaviorSubject } from 'rxjs';
+import { catchError, finalize, switchMap, filter, take } from 'rxjs/operators';
 import { throwError } from 'rxjs';
-//import { AutorizationService } from '../autorization/autorization.service';
 import { Router } from '@angular/router';
 import { UserTokens } from './userstoken';
-import { Response } from 'selenium-webdriver/http';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
-  constructor(/*private authenticationService: AutorizationService,*/ private http: HttpClient, private router: Router) { }
 
-  intercept(request: HttpRequest<any>, newRequest: HttpHandler): Observable<HttpEvent<any>> {
+  isRefreshingToken: boolean = false;
+  tokenSubject: BehaviorSubject<string> = new BehaviorSubject<string>(null);
+
+  constructor(private http: HttpClient, private router: Router) { }
+
+  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
     let tokenInfo = JSON.parse(localStorage.getItem('TokenInfo'));
+    return next.handle(this.addTokenToRequest(request, tokenInfo.token))
+      .pipe(
+        catchError(err => {
+          if (err instanceof HttpErrorResponse) {
+            switch ((<HttpErrorResponse>err).status) {
+              case 401:
+                return <Observable<HttpEvent<any>>>this.handle401Error(request, next);
 
-    request = request.clone({
-      setHeaders: {
-        // Authorization: `Bearer ${tokenInfo.accessToken}`,
-        // 'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
-      }
-    });
-    return newRequest.handle(request).pipe(catchError(err => {
-      if (err.status === 401 && tokenInfo != null ) {
-        localStorage.removeItem('TokenInfo');
-        //     request.s < UserTokens > = localStorage.getItem('TokenInfo');
-        let url = 'https://localhost:44366/api/auth/refresh';///////////////////////////////////////////////////////////////
-
-        this.http.post<UserTokens>(url, tokenInfo)
-          .subscribe(result => {
-            localStorage.setItem('TokenInfo', JSON.stringify(result));
-            let returnUrl = localStorage.getItem('returnUrl');
-            this.router.navigate([returnUrl]);
-          }, error => {
-            console.log(error);
-            console.log('wow');
-            if (error.status === 401) {
-              this.router.navigate(['/login']);
             }
-          });
-        
-        }
-          //localStorage.removeItem('TokenInfo');
-      console.log('yeah');
-      if (err.status === 401) {
-        this.router.navigate(['/login']);
-        // return  return newRequest.handle(request);
-        //if 401 response returned from api, logout from application & redirect to login page.
-        // this.authenticationService.logout();
-      }
+          } else {
+            return throwError(err);
+          }
+        }));
+  }
 
-      const error = err.statusText || err.error.message ;
-      return throwError(error);
-    }));
+  private addTokenToRequest(request: HttpRequest<any>, token: string): HttpRequest<any> {
+    return request.clone({ setHeaders: { Authorization: `Bearer ${token}` } });
+  }
+
+  private handle401Error(request: HttpRequest<any>, next: HttpHandler) {
+
+    if (!this.isRefreshingToken) {
+      this.isRefreshingToken = true;
+
+      this.tokenSubject.next(null);
+
+      let url = 'https://localhost:44366/api/auth/refresh';
+      let tokenInfo = JSON.parse(localStorage.getItem('TokenInfo'));
+      return this.http.post(url, tokenInfo)
+        .pipe(
+          switchMap((user: UserTokens) => {
+            if (user) {
+              this.tokenSubject.next(user.token);;
+              localStorage.setItem('TokenInfo', JSON.stringify(user));
+              return next.handle(this.addTokenToRequest(request, user.token));
+            }
+
+            return;
+          }),
+          catchError(err => {
+            return err;
+          }),
+          finalize(() => {
+            this.isRefreshingToken = false;
+          })
+        );
+    } else {
+      this.isRefreshingToken = false;
+
+      return this.tokenSubject
+        .pipe(filter(token => token != null),
+          take(1),
+          switchMap(token => {
+            return next.handle(this.addTokenToRequest(request, token));
+          }));
+    }
   }
 }

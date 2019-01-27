@@ -16,11 +16,12 @@ export class AppComponent implements OnInit {
     // TODO: Set Taster Root (Overlay) container
     //this.toastr.setRootViewContainerRef(vcr);
     //this.Authenticated = this.securityService.IsAuthorized;
+    //localStorage.clear();
+
   }
 
   ngOnInit() {
     console.log('app on init');
-    localStorage.clear();
    // this.subscription = this.securityService.authenticationChallenge$.subscribe(res => this.Authenticated = res);
 
     //Get configuration from server environment variables:

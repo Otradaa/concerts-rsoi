@@ -7,7 +7,6 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 
-import { httpInterceptor } from './token.interceptor';
 import { ErrorInterceptor } from './error.interceptor';
 import { TokenComponent } from './oauth2/token.component'
 import { AuthComponent } from './auth/auth.component';
@@ -54,7 +53,6 @@ import { Oauth2Component } from './oauth2/oauth2.component';
     ])
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: httpInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     TokenCheck //, AutorizationService
   ],

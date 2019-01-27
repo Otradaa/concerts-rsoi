@@ -19,63 +19,63 @@ import { first } from 'rxjs/operators';
   templateUrl: './token.component.html'
 })
 
-export class TokenComponent { 
-//error: any; 
+export class TokenComponent {
+  //error: any; 
 
 
-//loginForm: FormGroup; 
-submitClick = false; 
-submitted = false; 
-returnUrl: string; 
-error = ''; 
-// user: User; 
-usersToken: UserTokens; 
-http: HttpClient; 
-authCode: string; 
+  //loginForm: FormGroup; 
+  submitClick = false;
+  submitted = false;
+  returnUrl: string;
+  error = '';
+  // user: User; 
+  usersToken: UserTokens;
+  http: HttpClient;
+  authCode: string;
 
-constructor(http: HttpClient, private route: ActivatedRoute, 
-private router: Router) { 
+  constructor(http: HttpClient, private route: ActivatedRoute,
+    private router: Router) {
 
-// this.baseUrl = "https://localhost:44350/api/products"; 
-this.http = http; 
-this.returnUrl = localStorage.getItem('returnUrl'); 
+    // this.baseUrl = "https://localhost:44350/api/products"; 
+    this.http = http;
+    this.returnUrl = localStorage.getItem('returnUrl');
 
-} 
+  }
 
 
-ngOnInit() { 
-// this.user = new User(); 
-this.usersToken = new UserTokens(); 
-this.authCode = this.route.snapshot.queryParams['code']; 
+  ngOnInit() {
+    // this.user = new User(); 
+    this.usersToken = new UserTokens();
+    this.authCode = this.route.snapshot.queryParams['code'];
 
-  let url = 'https://localhost:44366/api/auth/token'//?' + `code=${this.authCode}`;// + `&client_sercret=secret&client_id=app&redirect_uri=http://localhost:44323/` ; 
+    let url = 'https://localhost:44366/api/auth/token'//?' + `code=${this.authCode}`;// + `&client_sercret=secret&client_id=app&redirect_uri=http://localhost:44323/` ; 
 
-  const myHeaders = new HttpHeaders().set('Content-Type', 'application/json');
+    const myHeaders = new HttpHeaders().set('Content-Type', 'application/json');
 
-  const httpOptions = {
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json'
-    })
-  };
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    };
 
- /* let options;
-  options["headers"] = new HttpHeaders()
-    .append('Content-Type', 'application/json');*/
-  var bodyv = `{
+    /* let options;
+     options["headers"] = new HttpHeaders()
+       .append('Content-Type', 'application/json');*/
+    var bodyv = `{
            "client_id" : ` + `"clientid"` + `,
            "appSecret" : ` + `"secret"` + `,
            "code" : "` + this.authCode + `"
            }`;
 
-  this.http.post<UserTokens>(url, bodyv, httpOptions)
-  .subscribe(
-    result => { 
-this.usersToken = result; 
-localStorage.setItem('TokenInfo', JSON.stringify(result)); 
-this.router.navigate(['/concerts']); 
-}, error => { console.error(error); }); 
-// this.getProducts(3, 0); 
-} 
+    this.http.post<UserTokens>(url, bodyv, httpOptions)
+      .subscribe(
+        result => {
+          this.usersToken = result;
+          localStorage.setItem('TokenInfo', JSON.stringify(result));
+          this.router.navigate([this.returnUrl]);
+        }, error => { console.error(error); });
+    // this.getProducts(3, 0); 
+  }
 
 
 

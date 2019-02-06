@@ -17,19 +17,21 @@ export class ErrorInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
     let tokenInfo = JSON.parse(localStorage.getItem('TokenInfo'));
-    return next.handle(this.addTokenToRequest(request, tokenInfo.token))
-      .pipe(
-        catchError(err => {
-          if (err instanceof HttpErrorResponse) {
-            switch ((<HttpErrorResponse>err).status) {
-              case 401:
-                return <Observable<HttpEvent<any>>>this.handle401Error(request, next);
+    if (tokenInfo)
+      return next.handle(this.addTokenToRequest(request, tokenInfo.token))
+        .pipe(
+          catchError(err => {
+            if (err instanceof HttpErrorResponse) {
+              switch ((<HttpErrorResponse>err).status) {
+                case 401:
+                  return <Observable<HttpEvent<any>>>this.handle401Error(request, next);
 
+              }
+            } else {
+              return throwError(err);
             }
-          } else {
-            return throwError(err);
-          }
-        }));
+          }));
+    return next.handle(request);
   }
 
   private addTokenToRequest(request: HttpRequest<any>, token: string): HttpRequest<any> {

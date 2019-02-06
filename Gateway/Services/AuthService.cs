@@ -40,10 +40,14 @@ namespace Gateway.Services
             return await response.Content.ReadAsAsync<UserTokens>();
         }
 
-        public async Task<HttpResponseMessage> GetAuthCode(User user)//
+        public async Task<RedUrl> GetAuthCode(User user)//
         {
             var userContent = new StringContent(JsonConvert.SerializeObject(user), System.Text.Encoding.UTF8, "application/json");
-            return await _httpClient.PostAsync(_remoteServiceBaseUrl + "/oauth/authcode", userContent);
+            var response = await _httpClient.PostAsync(_remoteServiceBaseUrl + "/oauth/authcode", userContent);
+            return new RedUrl()
+            {
+                red = response.Headers.Location.AbsoluteUri
+            };
         }
 
     

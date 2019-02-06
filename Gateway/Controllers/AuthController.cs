@@ -40,11 +40,11 @@ namespace Gateway.Controllers
         public async Task<ActionResult> GetAuthCode([FromBody] User user)
         {
             var result = await _authService.GetAuthCode(user);
-            if (result.StatusCode == HttpStatusCode.OK)
+            if (result != null)
             {
-                return Ok(result.Content.ReadAsAsync<RedUrl>().Result);
+                return Ok(result);
             }
-            return BadRequest(result.ReasonPhrase);
+            return BadRequest();
 
         }
 

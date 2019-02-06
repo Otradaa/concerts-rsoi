@@ -16,7 +16,7 @@ namespace Gateway.Services
         Task<bool> ValidateToken(string accessToken);
         Task<string> LoginApp();
         Task<UserTokens> GetTokens(AppUser user);
-        Task<HttpResponseMessage> GetAuthCode(User user);
+        Task<RedUrl> GetAuthCode(User user);
 
     }
 }

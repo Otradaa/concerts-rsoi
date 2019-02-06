@@ -106,11 +106,7 @@ namespace AuthService.Controllers
             await _appsDb.SaveChangesAsync();
 
             string url = redirect_uri + "?code=" + app.code;
-            return new RedUrl()
-            {
-                red = url
-            };
-
+            return Redirect(url);
         }
 
         [HttpGet]//

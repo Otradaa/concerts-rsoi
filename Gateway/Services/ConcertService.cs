@@ -80,6 +80,12 @@ namespace Gateway.Services
             return await _httpClient.SendAsync(request);
         }
 
+        public async Task DeleteConcert(int id)
+        {
+            var request = new HttpRequestMessage(new HttpMethod("DELETE"),
+                _remoteServiceBaseUrl + "/concerts/" + id.ToString());
+            var responce = await _httpClient.SendAsync(request);
 
+        }
     }
 }

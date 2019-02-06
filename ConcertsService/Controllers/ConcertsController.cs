@@ -102,5 +102,28 @@ namespace ConcertsService.Controllers
             _logger.LogInformation("-> POST /concerts returned Created with id = {id}", concert.Id);
             return CreatedAtAction("GetConcert", new { id = concert.Id }, concert);
         }
+
+        // DELETE: api/Concerts/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteConcert([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var concert = await _repo.GetConcert(id);// await _context.Concert.FindAsync(id);
+            if (concert == null)
+            {
+                return NotFound();
+            }
+
+            //_context.Concert.Remove(concert);
+            _repo.RemoveConcert(concert);
+            //await _context.SaveChangesAsync();
+            await _repo.SaveChanges();
+
+            return Ok(concert);
+        }
     }
 }

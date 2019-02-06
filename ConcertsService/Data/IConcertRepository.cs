@@ -17,6 +17,7 @@ namespace ConcertsService.Data
         void ChangeState(Concert concert, EntityState state);
         Concert AddConcert(Concert concert);
         bool ConcertExists(int id);
+        void RemoveConcert(Concert concert);
 
     }
 }

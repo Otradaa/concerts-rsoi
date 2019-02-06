@@ -14,5 +14,6 @@ namespace Gateway.Services
         Task<ClientToken> GetToken();
         Task<HttpResponseMessage> PostOne(Concert concert, ClientToken token);
         Task<HttpResponseMessage> PutOne(int id, Concert concert);
+        Task DeleteConcert(int id);
     }
 }

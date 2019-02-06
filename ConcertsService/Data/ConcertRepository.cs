@@ -60,5 +60,10 @@ namespace ConcertsService.Data
         {
             return _context.Concert.Any(e => e.Id == id);
         }
+
+        public void RemoveConcert(Concert concert)
+        {
+            _context.Concert.Remove(concert);
+        }
     }
 }

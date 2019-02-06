@@ -17,6 +17,7 @@ export class ErrorInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
     let tokenInfo = JSON.parse(localStorage.getItem('TokenInfo'));
+    if (tokenInfo)
     return next.handle(this.addTokenToRequest(request, tokenInfo.token))
       .pipe(
         catchError(err => {
@@ -30,6 +31,7 @@ export class ErrorInterceptor implements HttpInterceptor {
             return throwError(err);
           }
         }));
+    return next.handle(request);
   }
 
   private addTokenToRequest(request: HttpRequest<any>, token: string): HttpRequest<any> {

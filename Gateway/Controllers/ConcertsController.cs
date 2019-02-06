@@ -4,11 +4,13 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using DalSoft.Hosting.BackgroundQueue;
 using Gateway.Models;
 using Gateway.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -20,10 +22,12 @@ namespace Gateway.Controllers
     {
         private readonly IGatewayService _gateway;
         private readonly ILogger _logger;
+        private BackgroundQueue _backgroundQueue;
         private ClientToken _token;
 
-        public ConcertsController(IGatewayService gateway, ILogger<ConcertsController> logger)
+        public ConcertsController(BackgroundQueue backgroundQueue, IGatewayService gateway, ILogger<ConcertsController> logger)
         {
+            _backgroundQueue = backgroundQueue;
             _gateway = gateway;
             _logger = logger;
             _token = new ClientToken();
@@ -33,10 +37,10 @@ namespace Gateway.Controllers
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] int page, [FromQuery] int pageSize)
         {
-            if (!Request.Headers.Keys.Any(p => p == "Authorization") ||
+          /*  if (!Request.Headers.Keys.Any(p => p == "Authorization") ||
                 !await _gateway.ValidateToken(Request.Headers["Authorization"].ToString()))
                 return Unauthorized();
-
+*/
             _logger.LogInformation("-> requested GET /concerts?page={page}&pageSize={pageSize}", page, pageSize);
             ConcertsCount concertsCount = await _gateway.GetConcerts(page, pageSize);
             List<Concert> concerts = concertsCount.concerts;
@@ -48,7 +52,7 @@ namespace Gateway.Controllers
                 {
                     _logger.LogInformation($"-> request to GET /perfomers/{concert.PerfomerId}");
                     Perfomer perfomer = await _gateway.GetPerfomerById(concert.PerfomerId);
-                    if (perfomer != null)
+                    //if (perfomer != null)
                     {
                         _logger.LogInformation("-> request to GET /venues/{0}", concert.VenueId);
                         Venue venue = await _gateway.GetVenueById(concert.VenueId);
@@ -82,14 +86,25 @@ namespace Gateway.Controllers
 
             if (response.IsSuccessStatusCode)
             {
+                //read concert get id
+                concert = await response.Content.ReadAsAsync<Concert>();
+                ///
+
                 Schedule schedule = new Schedule(concert.VenueId, concert.Date, concert.Id);
                 _logger.LogInformation("-> request to POST schedulesService/schedules");
-                bool success = await _gateway.PostSchedule(schedule);
-                if (success)
+                //return message
+                //read schedule get id
+                response = await _gateway.PostSchedule(schedule);
+                if (response.IsSuccessStatusCode)
                 {
                     _logger.LogInformation("-> POST /concerts returned new concert with id {0}",
                         concert.Id);
                     return CreatedAtAction("Get", new { id = concert.Id }, concert);
+                }
+                else
+                {
+                    //delete concert
+                    await _gateway.DeleteConcert(concert.Id);
                 }
             }
             _logger.LogInformation("-> POST /concerts returned BadRequest");
@@ -102,20 +117,57 @@ namespace Gateway.Controllers
         {
             _logger.LogInformation("-> requested PUT /concerts/{id}", id);
             _logger.LogInformation("-> request to PUT concertsService/concerts");
-            var response = await _gateway.PutConcert(id, concert);
-            if (response.IsSuccessStatusCode)
+
+          /*  _backgroundQueue.Enqueue(async cancellationToken =>
             {
-                Schedule schedule = new Schedule(concert.VenueId, concert.Date, id);
-                _logger.LogInformation("-> request to PUT schedulesService/schedules");
-                bool success = await _gateway.PutSchedule(schedule);
-                if (success)
+                //await _smtp.SendMailAsync(emailRequest.From, emailRequest.To, request.Body, cancellationToken);
+                await _gateway.PutConcert(id, concert);
+            });
+
+            _backgroundQueue.Enqueue(async cancellationToken =>
+            {
+                //await _smtp.SendMailAsync(emailRequest.From, emailRequest.To, request.Body, cancellationToken);
                 {
-                    _logger.LogInformation("-> PUT /concerts returned NoContent");
-                    return NoContent();
+                    Schedule schedule = new Schedule(concert.VenueId, concert.Date, id);
+
+                    await _gateway.PutSchedule(schedule);
                 }
+            });
+
+            return NoContent();
+            */
+
+            //HostingEnvironment.QueueBackgroundWorkItem(ct => SendEmail(info));
+             var response = await _gateway.PutConcert(id, concert);
+            if (!response.IsSuccessStatusCode)
+            {
+                _backgroundQueue.Enqueue(async cancellationToken =>
+                {
+                    //await _smtp.SendMailAsync(emailRequest.From, emailRequest.To, request.Body, cancellationToken);
+                    await _gateway.PutConcert(id, concert);
+                });
+                
             }
+            Schedule schedule = new Schedule(concert.VenueId, concert.Date, id);
+            _logger.LogInformation("-> request to PUT schedulesService/schedules");
+            bool success = await _gateway.PutSchedule(schedule);
+            if (!success)
+            {
+                _backgroundQueue.Enqueue(async cancellationToken =>
+                {
+                    //await _smtp.SendMailAsync(emailRequest.From, emailRequest.To, request.Body, cancellationToken);
+                        await _gateway.PutSchedule(schedule);
+                });
+                
+            }
+
+            _logger.LogInformation("-> PUT /concerts returned NoContent");
+            return NoContent();
+
+
             _logger.LogInformation("-> PUT /concerts returned BadRequest");
-            return BadRequest(response.ReasonPhrase);
+             return BadRequest(response.ReasonPhrase);
+             
         }
     }
 }

@@ -30,7 +30,7 @@ namespace Gateway.Services
             var request = new HttpRequestMessage(new HttpMethod("GET"), 
                 _remoteServiceBaseUrl +"/perfomers/" + id.ToString());
             var response = await _httpClient.SendAsync(request);
-            return await response.Content.ReadAsAsync<Perfomer>();
+            return null;// await response.Content.ReadAsAsync<Perfomer>();///////////////////////////////////
         }
 
         public async Task<List<Perfomer>> GetAll()

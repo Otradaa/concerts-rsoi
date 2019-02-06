@@ -1,4 +1,5 @@
-﻿using Gateway.Models;
+﻿using DalSoft.Hosting.BackgroundQueue;
+using Gateway.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -15,12 +16,16 @@ namespace Gateway.Services
     {
         //private readonly IOptions<AppSettings> _settings;
         private readonly HttpClient _httpClient;
+        private BackgroundQueue _backgroundQueue;
+
         //private readonly ILogger<CatalogService> _logger;
 
         private readonly string _remoteServiceBaseUrl;
 
-        public VenuesService(HttpClient httpClient, IConfiguration configuration)
+        public VenuesService(BackgroundQueue backgroundQueue, HttpClient httpClient, IConfiguration configuration)
         {
+            _backgroundQueue = backgroundQueue;
+
             _httpClient = new HttpClient();
             //_settings = settings;
             //_logger = logger;
@@ -44,14 +49,14 @@ namespace Gateway.Services
             return await response.Content.ReadAsAsync<List<Venue>>();
         }
 
-        public async Task<bool> PostSchedule(Schedule schedule)
+        public async Task<HttpResponseMessage> PostSchedule(Schedule schedule)
         {
             var request = new HttpRequestMessage(new HttpMethod("POST"),
                 _remoteServiceBaseUrl + "/schedules");
             request.Content = new StringContent(JsonConvert.SerializeObject(schedule), 
                 Encoding.UTF8, "application/json");
-            var response = await _httpClient.SendAsync(request);
-            return response.IsSuccessStatusCode;
+           // var response = await _httpClient.SendAsync(request);
+            return await _httpClient.SendAsync(request);
         }
 
         public async Task<bool> PutSchedule(Schedule schedule)
@@ -60,8 +65,16 @@ namespace Gateway.Services
                 _remoteServiceBaseUrl + "/schedules");
             request.Content = new StringContent(JsonConvert.SerializeObject(schedule), 
                 Encoding.UTF8, "application/json");
-            var response = await _httpClient.SendAsync(request);
-            return response.IsSuccessStatusCode;
+            try
+            {
+                var response = await _httpClient.SendAsync(request);
+                return response.IsSuccessStatusCode;
+
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
         }
     }
 }

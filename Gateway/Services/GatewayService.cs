@@ -43,12 +43,18 @@ namespace Gateway.Services
 
         public async Task<Perfomer> GetPerfomerById(int id)
         {
-            return await perfomersService.GetById(id);
+            var perfomer = await perfomersService.GetById(id);
+            if (perfomer == null)
+                perfomer = new Perfomer { };
+            return perfomer;
         }
 
         public async Task<Venue> GetVenueById(int id)
         {
-            return await venuesService.GetById(id);
+            var venue = await venuesService.GetById(id);
+            if (venue == null)
+                venue = new Venue { };
+            return venue;
         }
 
         public async Task<ClientToken> GetToken()
@@ -60,7 +66,7 @@ namespace Gateway.Services
             return await concertService.PostOne(concert, token);
         }
 
-        public async Task<bool> PostSchedule(Schedule schedule)
+        public async Task<HttpResponseMessage> PostSchedule(Schedule schedule)
         {
             return await venuesService.PostSchedule(schedule);
         }
@@ -78,6 +84,11 @@ namespace Gateway.Services
         public async Task<bool> ValidateToken(string token)
         {
             return await authService.ValidateToken(token);
+        }
+
+        public async Task DeleteConcert(int id)
+        {
+            await concertService.DeleteConcert(id);
         }
 
     }

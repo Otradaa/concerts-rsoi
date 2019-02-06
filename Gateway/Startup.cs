@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DalSoft.Hosting.BackgroundQueue.DependencyInjection;
 using Gateway.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -40,6 +41,11 @@ namespace Gateway
                     .AllowAnyHeader()
                     .AllowCredentials());
             });
+            services.AddBackgroundQueue(maxConcurrentCount: 1, millisecondsToWaitBeforePickingUpTask: 1000,
+              onException: exception =>
+              {
+
+              });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

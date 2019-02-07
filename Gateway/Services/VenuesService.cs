@@ -82,7 +82,9 @@ namespace Gateway.Services
                 _remoteServiceBaseUrl + "/schedules");
             request.Content = new StringContent(JsonConvert.SerializeObject(schedule), 
                 Encoding.UTF8, "application/json");
-            try
+            var response = await _httpClient.SendAsync(request);
+            return response.IsSuccessStatusCode;
+            /*try
             {
                 var response = await _httpClient.SendAsync(request);
                 return response.IsSuccessStatusCode;
@@ -91,7 +93,7 @@ namespace Gateway.Services
             catch (Exception e)
             {
                 return false;
-            }
+            }*/
         }
     }
 }

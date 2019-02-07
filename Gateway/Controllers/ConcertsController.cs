@@ -22,12 +22,10 @@ namespace Gateway.Controllers
     {
         private readonly IGatewayService _gateway;
         private readonly ILogger _logger;
-        private BackgroundQueue _backgroundQueue;
         private ClientToken _token;
 
-        public ConcertsController(BackgroundQueue backgroundQueue, IGatewayService gateway, ILogger<ConcertsController> logger)
+        public ConcertsController(IGatewayService gateway, ILogger<ConcertsController> logger)
         {
-            _backgroundQueue = backgroundQueue;
             _gateway = gateway;
             _logger = logger;
             _token = new ClientToken();
@@ -118,29 +116,21 @@ namespace Gateway.Controllers
             _logger.LogInformation("-> requested PUT /concerts/{id}", id);
             _logger.LogInformation("-> request to PUT concertsService/concerts");
 
-             var response = await _gateway.PutConcert(id, concert);
-            if (!response.IsSuccessStatusCode)
+            var response = await _gateway.PutConcert(id, concert);
+            if (response.IsSuccessStatusCode)
             {
-                _backgroundQueue.Enqueue(async cancellationToken =>
+                Schedule schedule = new Schedule(concert.VenueId, concert.Date, id);
+                _logger.LogInformation("-> request to PUT schedulesService/schedules");
+                bool success = await _gateway.PutSchedule(schedule);
+                if (success)
                 {
-                    await _gateway.PutConcert(id, concert);
-                });
-                
-            }
-            Schedule schedule = new Schedule(concert.VenueId, concert.Date, id);
-            _logger.LogInformation("-> request to PUT schedulesService/schedules");
-            bool success = await _gateway.PutSchedule(schedule);
-            if (!success)
-            {
-                _backgroundQueue.Enqueue(async cancellationToken =>
-                {
-                        await _gateway.PutSchedule(schedule);
-                });
-                
+                    _logger.LogInformation("-> PUT /concerts returned NoContent");
+                    return NoContent();
+
+                }
             }
 
-            _logger.LogInformation("-> PUT /concerts returned NoContent");
-            return NoContent();
+            return BadRequest();
 
         }
     }

@@ -1,7 +1,10 @@
-﻿using Gateway.Models;
+﻿using DalSoft.Hosting.BackgroundQueue;
+using Gateway.Models;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -13,10 +16,17 @@ namespace Gateway.Services
         private readonly IPerfomersService perfomersService;
         private readonly IVenuesService venuesService;
         private readonly IAuthService authService;
+        private BackgroundQueue _backgroundQueue;
+        private readonly ILogger _logger;
+
+
 
         public GatewayService(IConcertService _concertService, IAuthService _authService,
-            IPerfomersService _perfomersService, IVenuesService _venuesService)
+            IPerfomersService _perfomersService, IVenuesService _venuesService,
+            BackgroundQueue backgroundQueue, ILogger<GatewayService> logger)
         {
+            _backgroundQueue = backgroundQueue;
+            _logger = logger;
             concertService = _concertService;
             perfomersService = _perfomersService;
             venuesService = _venuesService;
@@ -73,12 +83,39 @@ namespace Gateway.Services
 
         public async Task<HttpResponseMessage> PutConcert(int id, Concert concert)
         {
-            return await concertService.PutOne(id, concert);
+            try
+            {
+                var response = await concertService.PutOne(id, concert);
+                return response;
+            }
+            catch (Exception e)
+            {
+                _backgroundQueue.Enqueue(async cancellationToken =>
+                {
+                    _logger.LogInformation("--> (QUEUE) PUT concert");
+                    await PutConcert(id, concert);
+                });
+                return new HttpResponseMessage(HttpStatusCode.NoContent);
+            }
         }
 
         public async Task<bool> PutSchedule(Schedule schedule)
         {
-            return await venuesService.PutSchedule(schedule);
+            try
+            {
+                var response = await venuesService.PutSchedule(schedule);
+                return response;
+            }
+            catch (Exception e)
+            {
+                _backgroundQueue.Enqueue(async cancellationToken =>
+                {
+                    _logger.LogInformation("--> (QUEUE) PUT schedule");
+                    await PutSchedule(schedule);
+                });
+                return true;
+            }
+            //return await venuesService.PutSchedule(schedule);
         }
 
         public async Task<bool> ValidateToken(string token)

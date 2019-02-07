@@ -7,7 +7,6 @@ using AspNet.Security.OAuth.Validation;
 using AuthService.Data;
 using AuthService.Models;
 using AuthService.Services;
-//using ConcertsService.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

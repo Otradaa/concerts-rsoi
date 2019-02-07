@@ -36,8 +36,17 @@ namespace Gateway.Services
         {
             var request = new HttpRequestMessage(new HttpMethod("GET"),
                 _remoteServiceBaseUrl + "/venues/" + id.ToString());
-            var response = await _httpClient.SendAsync(request);
-            return await response.Content.ReadAsAsync<Venue>();
+
+            try
+            {
+                var response = await _httpClient.SendAsync(request);
+                return await response.Content.ReadAsAsync<Venue>();
+            }
+            catch (Exception e)
+            {
+                var venue = new Venue { };
+                return venue;
+            }
         }
 
         public async Task<List<Venue>> GetAll()
@@ -55,8 +64,16 @@ namespace Gateway.Services
                 _remoteServiceBaseUrl + "/schedules");
             request.Content = new StringContent(JsonConvert.SerializeObject(schedule), 
                 Encoding.UTF8, "application/json");
-           // var response = await _httpClient.SendAsync(request);
-            return await _httpClient.SendAsync(request);
+            // var response = await _httpClient.SendAsync(request);
+            try
+            {
+                var response = await _httpClient.SendAsync(request);
+                return response;
+            }
+            catch (Exception e)
+            {
+                return new HttpResponseMessage(System.Net.HttpStatusCode.InternalServerError);
+            }
         }
 
         public async Task<bool> PutSchedule(Schedule schedule)

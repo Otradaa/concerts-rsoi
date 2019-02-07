@@ -118,32 +118,11 @@ namespace Gateway.Controllers
             _logger.LogInformation("-> requested PUT /concerts/{id}", id);
             _logger.LogInformation("-> request to PUT concertsService/concerts");
 
-          /*  _backgroundQueue.Enqueue(async cancellationToken =>
-            {
-                //await _smtp.SendMailAsync(emailRequest.From, emailRequest.To, request.Body, cancellationToken);
-                await _gateway.PutConcert(id, concert);
-            });
-
-            _backgroundQueue.Enqueue(async cancellationToken =>
-            {
-                //await _smtp.SendMailAsync(emailRequest.From, emailRequest.To, request.Body, cancellationToken);
-                {
-                    Schedule schedule = new Schedule(concert.VenueId, concert.Date, id);
-
-                    await _gateway.PutSchedule(schedule);
-                }
-            });
-
-            return NoContent();
-            */
-
-            //HostingEnvironment.QueueBackgroundWorkItem(ct => SendEmail(info));
              var response = await _gateway.PutConcert(id, concert);
             if (!response.IsSuccessStatusCode)
             {
                 _backgroundQueue.Enqueue(async cancellationToken =>
                 {
-                    //await _smtp.SendMailAsync(emailRequest.From, emailRequest.To, request.Body, cancellationToken);
                     await _gateway.PutConcert(id, concert);
                 });
                 
@@ -155,7 +134,6 @@ namespace Gateway.Controllers
             {
                 _backgroundQueue.Enqueue(async cancellationToken =>
                 {
-                    //await _smtp.SendMailAsync(emailRequest.From, emailRequest.To, request.Body, cancellationToken);
                         await _gateway.PutSchedule(schedule);
                 });
                 
@@ -164,10 +142,6 @@ namespace Gateway.Controllers
             _logger.LogInformation("-> PUT /concerts returned NoContent");
             return NoContent();
 
-
-            _logger.LogInformation("-> PUT /concerts returned BadRequest");
-             return BadRequest(response.ReasonPhrase);
-             
         }
     }
 }

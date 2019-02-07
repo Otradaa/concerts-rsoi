@@ -104,7 +104,7 @@ namespace ConcertsService.Controllers
         }
 
         // DELETE: api/Concerts/5
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"), AllowAnonymous]
         public async Task<IActionResult> DeleteConcert([FromRoute] int id)
         {
             if (!ModelState.IsValid)

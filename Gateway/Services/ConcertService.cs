@@ -68,7 +68,16 @@ namespace Gateway.Services
             request.Content = new StringContent(JsonConvert.SerializeObject(concert), 
                 Encoding.UTF8, "application/json");
 
-            return await _httpClient.SendAsync(request);
+            try
+            {
+                var response = await _httpClient.SendAsync(request);
+                return response;
+            }
+            catch (Exception e)
+            {
+                return new HttpResponseMessage(System.Net.HttpStatusCode.InternalServerError);
+            }
+             
         }
 
         public async Task<HttpResponseMessage> PutOne(int id, Concert concert)

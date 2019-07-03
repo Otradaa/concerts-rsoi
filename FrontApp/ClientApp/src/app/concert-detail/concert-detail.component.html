@@ -1,0 +1,68 @@
+<div class="container">
+  <div [hidden]="submitted">
+    <div *ngIf="error" class="alert alert-danger">{{error}}</div>
+
+    <h1>Редактирование</h1>
+    <form (ngSubmit)="onSubmit(heroForm)" #heroForm="ngForm">
+      <div class="form-group">
+        <label for="perfomer">Исполнитель</label>
+        <select class="form-control" id="perfomer"
+                required
+                [(ngModel)]="concert.perfomerId" name="perfomer"
+                #perfomer="ngModel">
+          <option *ngFor="let pow of fperfomers"
+                  [selected]="pow.name===concertInput.perfomerName ? true : null"
+                  [value]="pow.id">
+            {{pow.name}}
+          </option>
+        </select>
+        <div [hidden]="perfomer.valid || perfomer.pristine" class="alert alert-danger">
+          Perfomer is required
+        </div>
+      </div>
+
+
+
+      <div class="form-group">
+        <label for="venue">Площадка</label>
+        <select class="form-control" id="venue"
+                required
+                [(ngModel)]="concert.venueId" name="venue"
+                #venue="ngModel">
+          <option *ngFor="let pow of fvenues"
+                  [selected]="pow.name===concertInput.venueName ? true : null"
+                  [value]="pow.id">
+            {{pow.name}}
+          </option>
+        </select>
+        <div [hidden]="venue.valid || venue.pristine" class="alert alert-danger">
+          Venue is required
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="concertDate">Дата</label>
+        <input type="datetime-local" class="form-control" id="concertDate"
+               required [value]="concertInput.date"
+               [(ngModel)]="concert.date" name="concertDate"
+               #concertDate="ngModel">
+        <div [hidden]="concertDate.valid || concertDate.pristine"
+             class="alert alert-danger">
+          Date is required
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-success" [disabled]="
+              (perfomer.pristine && venue.pristine && concertDate.pristine)">
+        Submit
+      </button>
+      <button type="button" class="btn btn-default" style="margin-left:5px" (click)="submitted=false; heroForm.reset();changed.emit(false)">Назад</button>
+      <br>
+    </form>
+  </div>
+  <div [hidden]="!submitted">
+    <h2>Данные успешно изменены</h2>
+      <br>
+      <button type="button" class="btn btn-default" (click)="submitted=false; heroForm.reset(); changed.emit(false)">Назад</button>
+    </div>
+  </div>

@@ -1,0 +1,45 @@
+<div [hidden]="changing" style="padding-left: 30px;  margin-left: 30px;">
+  <h2>Список концертов</h2>
+  <button type="button" class="btn btn-default" routerLink="/concerts/new" (click)="messageService.clear()">
+    Создать
+  </button>
+  <p *ngIf="!concerts" style="margin-top: 15px">Пожалуйста, подождите..</p>
+  <div *ngIf="concerts" style="margin-top: 5px">
+    <table class="concerts table table-striped">
+      <thead>
+        <tr>
+          <td>Исполнитель</td>
+          <td>Площадка</td>
+          <td>Адрес</td>
+          <td>Дата</td>
+          <td></td>
+        </tr>
+      </thead>
+      <tbody>
+
+
+        <tr *ngFor="let p of concerts"
+            [class.selected]="p === selectedConcert"
+            (click)="onSelect(p)">
+          <td>{{p.perfomerName}}</td>
+          <td>{{p.venueName}}</td>
+          <td>{{p.venueAddress}}</td>
+          <td>{{p.date | date:'dd.MM.yyyy HH:mm'}}</td>
+          <td>
+            <button type="button" class="btn btn-default" (click)="onSelect(p); changing=true; messageService.clear()">Изменить</button>
+          </td>
+        </tr>
+
+      </tbody>
+
+    </table>
+    <ngb-pagination [collectionSize]="totalItems" [pageSize]="itemsPerPage" [(page)]="page" [maxSize]="7" [rotate]="true" (pageChange)="loadPage($event)"></ngb-pagination>
+  </div>
+</div>
+
+<div [hidden]="!changing">
+
+
+  <app-concert-detail [concertInput]="selectedConcert" (changed)="onPageChanged($event)"></app-concert-detail>
+
+</div>
